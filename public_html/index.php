@@ -25,6 +25,7 @@
 	// create new page object
 	$page = new HtmlPage('hgztools');
 	
+	$page->openBlock('div', 'iw-content');
 	$page->addInline('h2', 'Tools for all Wikimedia projects');
 	$page->openBlock('ul');
 	$page->addInline('li', '<a href="botstatistics/">Bot statistics</a>');
@@ -34,13 +35,15 @@
 	$page->closeBlock();
 	
 	$page->addInline('p', 'Contact: <a href="https://de.wikipedia.org/wiki/User_talk:Hgzh">hgzh @ de.wikipedia</a>, Source: <a href="https://github.com/hgzh">hgzh @ github.com</a>');
+	$page->closeBlock();
 	
+	$page->openBlock('div', 'iw-content');
 	$page->addInline('h2', 'Change log');
 	$page->addInline('h3', '2015-09-27');
 	$page->openBlock('ul');
 	$page->addInline('li', 'Category redirects: added sorting');
 	$page->addInline('li', 'migrated all tools to new framework');
-	$page->closeBlock();
+	$page->closeBlock(2);
 		
 	$page->output();
 	

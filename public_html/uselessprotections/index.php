@@ -32,6 +32,7 @@
 	$par_lang    = (isset($_GET['lang']   ) && $_GET['lang']    != '') ? strtolower($_GET['lang']   ) : '';
 	$par_project = (isset($_GET['project']) && $_GET['project'] != '') ? strtolower($_GET['project']) : '';
 	
+	$page->openBlock('div', 'iw-content');
 	$page->openBlock('p');
 	$page->addHTML('This tool shows pages that meet the following criteria:');
 	$page->openBlock('ol');
@@ -64,12 +65,15 @@
 	$optionForm->addHTML('</table>');
 	$optionForm->output();
 	
-	if (isset($par_lang) && $par_lang != '' & isset($par_project) && $par_project != '') {
+	$page->closeBlock();
 	
+	if (isset($par_lang) && $par_lang != '' & isset($par_project) && $par_project != '') {
+		
 		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project)) {
 			$page->setMessage('Please enter valid language and project codes.', true);
 		}
 		
+		$page->openBlock('div', 'iw-content');
 		$page->addInline('h2', 'Results');
 		
 		$db->replicaConnect(Database::getName($par_lang, $par_project));
@@ -89,6 +93,8 @@
 		}
 		
 		$q1->close();
+		$page->closeBlock();
+
 	}
 	
 	$db->close();

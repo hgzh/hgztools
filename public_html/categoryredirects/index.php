@@ -63,11 +63,11 @@
 	
 	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '') {
 		
-		$page->openBlock('div', 'iw-content');
 		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(name|entries)$/', $par_sort)) {
 			$page->setMessage('Please enter valid language and project codes.', true);
 		}
-		
+
+		$page->openBlock('div', 'iw-content');		
 		$page->addInline('h2', 'Results');
 		
 		$db->replicaConnect(Database::getName($par_lang, $par_project));

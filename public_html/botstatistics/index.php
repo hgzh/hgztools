@@ -34,6 +34,7 @@
 	$par_sort    = (isset($_GET['sort'])    && $_GET['sort']    != '') ? strtolower($_GET['sort'])    : 'ec';
 	$par_dir     = (isset($_GET['dir'])     && $_GET['dir']     != '') ? strtolower($_GET['dir'])     : 'desc';
 	
+	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool generates a list of bots and former bots in a given project with their total editcount and registration date.');
 	$page->addInline('h2', 'Options');
 	
@@ -74,12 +75,15 @@
 	$optionForm->addHTML('</table>');
 	$optionForm->output();
 	
-	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '') {
+	$page->closeBlock();
 	
+	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '') {
+		
 		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(name|reg|ec)$/', $par_sort) || !preg_match( '/^(asc|desc)$/', $par_dir) ) {
 			$page->setMessage('Please enter  valid language and project codes.', true);
 		}
-		
+
+		$page->openBlock('div', 'iw-content');		
 		$page->addInline('h2', 'Results');
 		
 		$db->replicaConnect(Database::getName($par_lang, $par_project));
@@ -130,6 +134,7 @@
 		$page->closeBlock();
 		
 		$q1->close();
+		$page->closeBlock();
 	}
 	
 	$db->close();
