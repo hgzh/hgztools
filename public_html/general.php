@@ -171,7 +171,7 @@
 					break;
 				}
 				$tag = $this->stack->pop();
-				$this->stackNo = $this->stackNo - 1
+				$this->stackNo = $this->stackNo - 1;
 				self::$content .= '</' . $tag . '>';
 			}
 		}
@@ -214,7 +214,7 @@
 		public function output() {
 			echo $this->head;
 			echo $this->navigation;
-			echo '<div class="iw-content">';
+			// echo '<div class="iw-content">';
 			// echo $this->message;
 			echo self::$content;
 			echo $this->foot;
