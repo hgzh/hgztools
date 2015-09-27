@@ -47,6 +47,12 @@
 		 * Stack, der zum Schließen geöffneter HTML-Tags benötigt wird
 		 */		
 		private $stack;
+
+		/**
+		 * [int]
+		 * Anzahl der Elemente im Stack
+		 */		
+		private $stackNo;
 		
         /**
          * Klassenkonstruktor
@@ -122,6 +128,7 @@
 			$this->message .= '</div>';
 			
 			if ($endAfter == true) {
+				$this->closeBlock(100);
 				$this->output();
 				die;
 			}
@@ -145,6 +152,7 @@
 			}
 			self::$content .= '>';
 			$this->stack->push($tag);
+			$this->stackNo++;
 		}
 
 		/**
@@ -159,7 +167,11 @@
 			$i   = ''; // [value] Hochzählen
 			
 			for ($i = 0; $i < $nr; $i++) {
+				if ($this->stackNo == 0) {
+					break;
+				}
 				$tag = $this->stack->pop();
+				$this->stackNo = $this->stackNo - 1
 				self::$content .= '</' . $tag . '>';
 			}
 		}

@@ -33,6 +33,7 @@
 	$par_project = (isset( $_GET['project']) && $_GET['project'] != '') ? strtolower( $_GET['project']) : '';
 	$par_sort    = (isset( $_GET['sort'])    && $_GET['sort']    != '') ? strtolower( $_GET['sort'])    : 'name';
 	
+	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool shows a list of categories that redirect to another category in the given project and the number of entries in it.');
 	$page->addInline('h2', 'Options');
 	
@@ -58,10 +59,13 @@
 	$optionForm->addHTML('</table>');
 	$optionForm->output();
 	
+	$page->closeBlock();
+	
 	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '') {
 		
+		$page->openBlock('div', 'iw-content');
 		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(name|entries)$/', $par_sort)) {
-			$page->setMessage('Please enter  valid language and project codes.', true);
+			$page->setMessage('Please enter valid language and project codes.', true);
 		}
 		
 		$page->addInline('h2', 'Results');
@@ -87,7 +91,7 @@
 			$page->closeBlock();
 			while ($l1 = $q1->fetch_assoc()) {
 				$page->openBlock('tr');
-				$page->addInline('td', '<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/Category:' . $l1['page_title'] . '?redirect=no">' . $l1['page_title'] . '</a>');
+				$page->addInline('td', '<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/Category:' . $l1['page_title'] . '?redirect=no">' . str_replace('_', ' ', $l1['page_title']) . '</a>');
 				$page->addInline('td', $l1['cl']);
 				$page->closeBlock();
 			}
@@ -95,6 +99,7 @@
 		}
 		
 		$q1->close();
+		$page->closeBlock();
 	
 	}
 	
