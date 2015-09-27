@@ -68,7 +68,7 @@
 		$t1 .= 'WHERE page.page_namespace = 14 AND page.page_is_redirect = 1 GROUP BY page.page_title ORDER BY page.page_title;';
 		$q1 = $db->query($t1);
 		
-		if ($db->num_rows === 0) {
+		if ($q1->num_rows === 0) {
 			$page->addInline('p', 'there were no results for this query', 'iw-info');
 		} else {
 			$page->openBlock('table', 'iw-table');
