@@ -35,7 +35,7 @@
 	$page->openBlock('p');
 	$page->addHTML('This tool shows pages that meet the following criteria:');
 	$page->openBlock('ol');
-	$page->addInline('li', 'The page is protected from moves trough non-autoconfirmed users');
+	$page->addInline('li', 'The page is protected from moves through non-autoconfirmed users');
 	$page->addInline('li', 'The page is not protected from editing through non-autoconfirmed users or sysops');
 	$page->closeBlock();
 	$page->addHTML('In most wikis, the autoconfirmed right is required for moving pages, so a single move protection for non-autoconfirmed users will never be effective.');

@@ -62,7 +62,7 @@
 			$this->head .= '<html>';
 			$this->head .= '<head>';
 			$this->head .= '<meta http-equiv="Content-Type" content="text/html" charset="UTF-8">';
-			$this->head .= '<link rel="stylesheet" type="text/css" href="http://tools.wmflabs.org/hgztools/main.css">';
+			$this->head .= '<link rel="stylesheet" type="text/css" href="//tools.wmflabs.org/hgztools/main.css">';
 			$this->head .= '<title>' . $title . '</title>';
 			$this->head .= '</head>';
 			$this->head .= '<body>';
@@ -71,7 +71,7 @@
 			
 			// footer setzen, Dokument beenden
 			$this->foot .= '</div><div class="iw-footer">';
-			$this->foot .= 'Powered by <a href="http://wikitech.wikimedia.org">Wikimedia Labs</a>.';
+			$this->foot .= 'Powered by <a href="https://wikitech.wikimedia.org">Wikimedia Labs</a>.';
 			$this->foot .= '</div></div>';
 			$this->foot .= '</body>';
 			$this->foot .= '</html>';
