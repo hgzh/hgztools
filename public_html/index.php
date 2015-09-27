@@ -41,7 +41,7 @@
 	$page->addInline('h2', 'Change log');
 	$page->addInline('h3', '2015-09-27');
 	$page->openBlock('ul');
-	$page->addInline('li', 'Bot statistics: added editcount range and changed sorting system');
+	$page->addInline('li', 'Bot statistics: changed sorting system');
 	$page->addInline('li', 'Category redirects: added sorting and size of category page');
 	$page->addInline('li', 'Useless protections: added namespace support');
 	$page->addInline('li', 'migrated all tools to new framework');

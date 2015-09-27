@@ -53,18 +53,6 @@
 	$optionForm->addInput('project', $par_project, 'Project code, e.g wikipedia', 20, true);
 	$optionForm->addHTML('</td></tr>');
 	
-	$optionForm->addHTML('<tr><td>');
-	$optionForm->addLabel('editsmax', 'Maximum edits');
-	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('editsmax', $par_editsmax, '', 0, false, 'number');
-	$optionForm->addHTML('</td></tr>');
-
-	$optionForm->addHTML('<tr><td>');
-	$optionForm->addLabel('editsmin', 'Minimum edits');
-	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('editsmin', $par_editsmin, '', 0, false, 'number');
-	$optionForm->addHTML('</td></tr>');
-	
 	$optionForm->addHTML('<tr><td colspan="2">');
 	$optionForm->addButton('submit', 'View statistics');
 	$optionForm->addHTML('</td></tr>');
@@ -86,12 +74,6 @@
 		$db->replicaConnect(Database::getName($par_lang, $par_project));
 		$t1  = 'SELECT DISTINCT user_id, user_name, user_registration, user_editcount FROM user, user_groups';
 		$t1 .= ' WHERE ug_group = \'bot\' AND ug_user = user_id';
-		if (isset($par_editsmin) && $par_editsmin > 0) {
-			$t1 .= ' AND user_editcount >= ' . $par_editsmin;
-		}
-		if (isset($par_editsmax) && $par_editsmax > 0) {
-			$t1 .= ' AND user_editcount <= ' . $par_editsmax;
-		}
 		$t1 .= ' ORDER BY ';
 		switch ($par_sort) {
 			case 'name': $t1 .= 'user_name '; break;
