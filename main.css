@@ -1,0 +1,133 @@
+body {
+	background: rgb(245, 245, 245);
+	font-family: "Segoe UI", Sans-Serif;
+	margin: 0em;
+}
+
+p {
+	margin: 0em;
+	margin-bottom: 1em;
+}
+
+.iw-wrapper {
+	width: 70%;
+	margin: 0em auto;
+	margin-bottom: 0.5em;
+}
+
+.iw-headline {
+	float: left;
+	margin: 0.5em 0.2em 0.5em 0.2em;
+	text-align: left;
+	font-size: 200%;
+}
+
+div.iw-navigation {
+	float: right;
+	font-style: italic;
+	margin: 0.8em 0em 0.3em 0em;
+}
+
+ul.iw-navigation li {
+	list-style-type: none;
+	display: inline;
+	margin-left: 0.2em;
+}
+
+ul.iw-navigation a {
+	padding: 0.4em;
+}
+
+ul.iw-navigation a:hover {
+	background: white;
+	border: 0.1em solid rgb(200, 200, 200);
+	border-radius: 0.2em;
+	padding: 0.3em;
+}
+
+.iw-content {
+	border: 0.1em solid rgb(200, 200, 200);
+	border-radius: 0.2em;
+	padding: 1em;
+	background: white;
+	box-shadow: 0.04em 0.04em 0.1em rgb(200, 200, 200);
+	clear: both;
+}
+
+.iw-footer {
+	color: rgb(130, 130, 130);
+	text-align: center;
+	font-size: 85%;
+	margin-top: 1em;
+}
+
+.iw-info {
+	font-size: 85%;
+	font-style: italic;
+	color: rgb(130, 130, 130);
+}
+
+.iw-code {
+	font-size: 85%;
+	font-family: "Consolas", "Courier New", "Courier", monospace;
+	background: rgb(245, 245, 245);
+	border-radius: 0.2em;
+	padding: 0.5em;
+}
+
+input {
+	margin: 0.1em 0.5em 0.1em 0.5em;
+	padding: 0.2em;
+}
+
+input[type=submit] {
+	margin: 0.3em 0em 0.3em 0em;
+}
+
+hr {
+	border: 0em;
+	height: 0em;
+	border-bottom: 0.1em dotted rgb(200, 200, 200);
+	margin: 1em 0em 1em 0em;
+}
+
+h2 {
+	font-size: 115%;
+	border-bottom: 0.1em dotted rgb(200, 200, 200);
+}
+
+h3 {
+	font-size: 100%;
+}
+
+h4 {
+	font-size: 85%;
+}
+
+table.iw-table {
+	border: 0.1em solid rgb(200, 200, 200);
+}
+
+table.iw-full {
+	width: 100%;
+}
+
+table.iw-table th {
+	padding: 0.5em;
+	background: rgb(245, 245, 245);
+	text-align: left;
+}
+
+table.iw-table td {
+	padding: 0.5em;
+	border-top: 0.1em solid rgb(200, 200, 200);
+}
+
+a {
+	color: rgb(0, 120, 255);
+	text-decoration: none;
+}
+
+a:hover {
+	color: rgb(120, 0, 255);
+}
