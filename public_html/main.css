@@ -106,6 +106,7 @@ h4 {
 
 table.iw-table {
 	border: 0.1em solid rgb(200, 200, 200);
+	box-shadow: 0.04em 0.04em 0.1em rgb(200, 200, 200);
 }
 
 table.iw-full {
@@ -113,14 +114,14 @@ table.iw-full {
 }
 
 table.iw-table th {
-	padding: 0.5em;
+	padding: .3em .5em .3em .5em;
 	background: rgb(245, 245, 245);
 	text-align: left;
 }
 
 table.iw-table td {
-	padding: 0.5em;
-	border-top: 0.1em solid rgb(200, 200, 200);
+	padding: .3em .5em .3em .5em;
+	border-top: 0.1em dotted rgb(200, 200, 200);
 }
 
 a {
