@@ -62,7 +62,7 @@
 			$this->head .= '<html>';
 			$this->head .= '<head>';
 			$this->head .= '<meta http-equiv="Content-Type" content="text/html" charset="UTF-8">';
-			$this->head .= '<link rel="stylesheet" type="text/css" href="main.css">';
+			$this->head .= '<link rel="stylesheet" type="text/css" href="http://tools.wmflabs.org/hgztools/main.css">';
 			$this->head .= '<title>' . $title . '</title>';
 			$this->head .= '</head>';
 			$this->head .= '<body>';
