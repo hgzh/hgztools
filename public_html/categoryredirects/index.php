@@ -63,7 +63,7 @@
 	
 	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '') {
 		
-		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(name|entries)$/', $par_sort)) {
+		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(name|entries|length)$/', $par_sort)) {
 			$page->setMessage('Please enter valid language and project codes.', true);
 		}
 
@@ -71,12 +71,14 @@
 		$page->addInline('h2', 'Results');
 		
 		$db->replicaConnect(Database::getName($par_lang, $par_project));
-		$t1  = 'SELECT page.page_title, count(categorylinks.cl_from) AS cl ';
+		$t1  = 'SELECT page.page_title, page.page_len, count(categorylinks.cl_from) AS cl ';
 		$t1 .= 'FROM page LEFT JOIN categorylinks ON page.page_title = categorylinks.cl_to ';
 		$t1 .= 'WHERE page.page_namespace = 14 AND page.page_is_redirect = 1 GROUP BY page.page_title ';
 		if ($par_sort == 'name') {
 			$t1 .= 'ORDER BY page.page_title;';
-		} else {
+		} elseif ($par_sort == 'length') {
+			$t1 .= 'ORDER BY page.page_len DESC;';
+		} elseif ($par_sort == 'entries') {
 			$t1 .= 'ORDER BY cl DESC;';
 		}
 		$q1 = $db->query($t1);
@@ -88,11 +90,13 @@
 			$page->openBlock('tr');
 			$page->addInline('th', '<a href="index.php?lang=' . $par_lang . '&project=' . $par_project . '&sort=name">Name</a>');
 			$page->addInline('th', '<a href="index.php?lang=' . $par_lang . '&project=' . $par_project . '&sort=entries">Entries</a>');
+			$page->addInline('th', '<a href="index.php?lang=' . $par_lang . '&project=' . $par_project . '&sort=length">Bytes</a>');
 			$page->closeBlock();
 			while ($l1 = $q1->fetch_assoc()) {
 				$page->openBlock('tr');
 				$page->addInline('td', '<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/Category:' . $l1['page_title'] . '?redirect=no">' . str_replace('_', ' ', $l1['page_title']) . '</a>');
 				$page->addInline('td', $l1['cl']);
+				$page->addInline('td', $l1['page_len']);
 				$page->closeBlock();
 			}
 			$page->closeBlock();

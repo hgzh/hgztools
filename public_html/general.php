@@ -214,9 +214,11 @@
 		public function output() {
 			echo $this->head;
 			echo $this->navigation;
-			echo '<div class="iw-content">';
-			echo $this->message;
-			echo '</div>';
+			if ($this->message != '') {
+				echo '<div class="iw-content">';
+				echo $this->message;
+				echo '</div>';
+			}
 			echo self::$content;
 			echo $this->foot;
 		}
