@@ -1,5 +1,10 @@
 <?php
 	/**
+	 *
+	 * CATEGORY REDIRECTS
+	 * Find category pages that redirect to another one.
+	 *
+	 *
 	 * This program is free software; you can redistribute it and/or modify
 	 * it under the terms of the GNU General Public License as published by
 	 * the Free Software Foundation; either version 2 of the License, or
@@ -15,7 +20,6 @@
 	 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	 */
 	
-	error_reporting(E_ALL);
 	require_once('/data/project/hgztools/public_html/general.php');
 	
 	// create new page object
@@ -53,7 +57,6 @@
 	$optionForm->addHTML('</table>');
 	$optionForm->output();
 	
-		
 	if (isset($par_lang) && $par_lang != '' & isset($par_project) && $par_project != '') {
 		
 		if (!preg_match( '/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) ) {
