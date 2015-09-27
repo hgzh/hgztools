@@ -31,6 +31,7 @@
 	// get parameters from url
 	$par_lang    = (isset( $_GET['lang'])    && $_GET['lang']    != '') ? strtolower( $_GET['lang'])    : '';
 	$par_project = (isset( $_GET['project']) && $_GET['project'] != '') ? strtolower( $_GET['project']) : '';
+	$par_sort    = (isset( $_GET['sort'])    && $_GET['sort']    != '') ? strtolower( $_GET['sort'])    : 'name';
 	
 	$page->addInline('p', 'This tool shows a list of categories that redirect to another category in the given project and the number of entries in it.');
 	$page->addInline('h2', 'Options');
@@ -59,7 +60,7 @@
 	
 	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '') {
 		
-		if (!preg_match( '/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) ) {
+		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(name|entries)$/', $par_sort)) {
 			$page->setMessage('Please enter  valid language and project codes.', true);
 		}
 		
@@ -68,14 +69,22 @@
 		$db->replicaConnect(Database::getName($par_lang, $par_project));
 		$t1  = 'SELECT page.page_title, count(categorylinks.cl_from) AS cl ';
 		$t1 .= 'FROM page LEFT JOIN categorylinks ON page.page_title = categorylinks.cl_to ';
-		$t1 .= 'WHERE page.page_namespace = 14 AND page.page_is_redirect = 1 GROUP BY page.page_title ORDER BY page.page_title;';
+		$t1 .= 'WHERE page.page_namespace = 14 AND page.page_is_redirect = 1 GROUP BY page.page_title ';
+		if ($par_sort == 'name') {
+			$t1 .= 'ORDER BY page.page_title;';
+		} else {
+			$t1 .= 'ORDER BY cl DESC;';
+		}
 		$q1 = $db->query($t1);
 		
 		if ($q1->num_rows === 0) {
 			$page->addInline('p', 'there were no results for this query', 'iw-info');
 		} else {
 			$page->openBlock('table', 'iw-table');
-			$page->addInline('tr', '<th>Name</th><th>Entries</th>');
+			$page->openBlock('tr');
+			$page->addInline('th', '<a href="index.php?lang=' . $par_lang . '&project=' . $par_project . '&sort=name">Name</a>');
+			$page->addInline('th', '<a href="index.php?lang=' . $par_lang . '&project=' . $par_project . '&sort=entries">Entries</a>');
+			$page->closeBlock();
 			while ($l1 = $q1->fetch_assoc()) {
 				$page->openBlock('tr');
 				$page->addInline('td', '<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/Category:' . $l1['page_title'] . '?redirect=no">' . $l1['page_title'] . '</a>');
