@@ -29,8 +29,8 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_lang    = ( isset( $_GET['lang']    ) && $_GET['lang']    != '' ) ? strtolower( $_GET['lang']    ) : '';
-	$par_project = ( isset( $_GET['project'] ) && $_GET['project'] != '' ) ? strtolower( $_GET['project'] ) : '';
+	$par_lang    = (isset($_GET['lang']   ) && $_GET['lang']    != '') ? strtolower($_GET['lang']   ) : '';
+	$par_project = (isset($_GET['project']) && $_GET['project'] != '') ? strtolower($_GET['project']) : '';
 	
 	$page->openBlock('p');
 	$page->addHTML('This tool shows pages that meet the following criteria:');

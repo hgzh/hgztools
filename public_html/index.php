@@ -34,4 +34,6 @@
 	
 	$page->addInline('p', 'Contact: <a href="https://de.wikipedia.org/wiki/User_talk:Hgzh">hgzh @ de.wikipedia</a>, Source: <a href="https://github.com/hgzh">hgzh @ github.com</a>');
 	
+	$page->output();
+	
 ?>

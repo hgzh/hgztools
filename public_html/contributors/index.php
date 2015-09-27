@@ -20,7 +20,7 @@
 	 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	 */
 	
-	require_once( '/data/project/hgztools/public_html/general.php' );
+	require_once('/data/project/hgztools/public_html/general.php');
 	
 	// create new page object
 	$page = new HtmlPage('Contributors');
@@ -29,11 +29,11 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_lang    = ( isset( $_GET['lang'] )    && $_GET['lang']    != '' ) ? strtolower( $_GET['lang'] )        : '';
-	$par_project = ( isset( $_GET['project'] ) && $_GET['project'] != '' ) ? strtolower( $_GET['project'] )     : '';
-	$par_page    = ( isset( $_GET['page'] )    && $_GET['page']    != '' ) ? htmlspecialchars( $_GET['page'] )  : '';
-	$par_since   = ( isset( $_GET['since'] )   && $_GET['since']   != '' ) ? htmlspecialchars( $_GET['since'] ) : '0000-00-00';
-	$par_until   = ( isset( $_GET['until'] )   && $_GET['until']   != '' ) ? htmlspecialchars( $_GET['until'] ) : '0000-00-00';
+	$par_lang    = (isset($_GET['lang'])    && $_GET['lang']    != '') ? strtolower($_GET['lang'])        : '';
+	$par_project = (isset($_GET['project']) && $_GET['project'] != '') ? strtolower($_GET['project'])     : '';
+	$par_page    = (isset($_GET['page'])    && $_GET['page']    != '') ? htmlspecialchars($_GET['page'])  : '';
+	$par_since   = (isset($_GET['since'])   && $_GET['since']   != '') ? htmlspecialchars($_GET['since']) : '0000-00-00';
+	$par_until   = (isset($_GET['until'])   && $_GET['until']   != '') ? htmlspecialchars($_GET['until']) : '0000-00-00';
 	
 	$page->addInline('p', 'This tool creates a list of contributors to a given article on a given project in wikitext.');
 	$page->addInline('h2', 'Options');

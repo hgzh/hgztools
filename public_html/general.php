@@ -447,7 +447,7 @@
 			
 			$name = $ns[$nr];
 			
-			if ($urlencoded = true) {
+			if ($urlencoded == true) {
 				return $name;
 			} else {
 				return str_replace('_', ' ', $name);

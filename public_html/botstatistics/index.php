@@ -29,10 +29,10 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_lang    = ( isset( $_GET['lang'] )    && $_GET['lang']    != '' ) ? strtolower( $_GET['lang'] )    : '';
-	$par_project = ( isset( $_GET['project'] ) && $_GET['project'] != '' ) ? strtolower( $_GET['project'] ) : '';
-	$par_sort    = ( isset( $_GET['sort'] )    && $_GET['sort']    != '' ) ? strtolower( $_GET['sort'] )    : 'ec';
-	$par_dir     = ( isset( $_GET['dir'] )     && $_GET['dir']     != '' ) ? strtolower( $_GET['dir'] )     : 'desc';
+	$par_lang    = (isset($_GET['lang'])    && $_GET['lang']    != '') ? strtolower($_GET['lang'])    : '';
+	$par_project = (isset($_GET['project']) && $_GET['project'] != '') ? strtolower($_GET['project']) : '';
+	$par_sort    = (isset($_GET['sort'])    && $_GET['sort']    != '') ? strtolower($_GET['sort'])    : 'ec';
+	$par_dir     = (isset($_GET['dir'])     && $_GET['dir']     != '') ? strtolower($_GET['dir'])     : 'desc';
 	
 	$page->addInline('p', 'This tool generates a list of bots and former bots in a given project with their total editcount and registration date.');
 	$page->addInline('h2', 'Options');

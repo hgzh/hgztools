@@ -29,8 +29,8 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_lang    = (isset( $_GET['lang'])    && $_GET['lang']    != '' ) ? strtolower( $_GET['lang'] )    : '';
-	$par_project = (isset( $_GET['project']) && $_GET['project'] != '' ) ? strtolower( $_GET['project'] ) : '';
+	$par_lang    = (isset( $_GET['lang'])    && $_GET['lang']    != '') ? strtolower( $_GET['lang'])    : '';
+	$par_project = (isset( $_GET['project']) && $_GET['project'] != '') ? strtolower( $_GET['project']) : '';
 	
 	$page->addInline('p', 'This tool shows a list of categories that redirect to another category in the given project and the number of entries in it.');
 	$page->addInline('h2', 'Options');
