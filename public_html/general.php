@@ -418,5 +418,41 @@
 			return $lang . $project . $separator . 'p';
 		}
 		
+		/**
+		 * Bezeichnung des Namensraums nach dessen Nummer ermitteln
+		 *
+		 * @parameter
+		 * - nr         : Namensraumnummer
+		 * - urlencoded : URL-kodierte Namen zurückgeben
+		 *
+		 */		
+		public static function getNsNameFromNr($nr, $urlencoded = true) {
+			$ns = array (0 => '',
+						 1 => 'Talk:',
+						 2 => 'User:',
+						 3 => 'User_talk:',
+						 4 => 'Project:',
+						 5 => 'Project_talk:',
+						 6 => 'File:',
+						 7 => 'File_talk:',
+						 8 => 'MediaWiki:',
+						 9 => 'MediaWiki_talk:',
+						 10 => 'Template:',
+						 11 => 'Template_talk:',
+						 12 => 'Help:',
+						 13 => 'Help_talk:',
+						 14 => 'Category:',
+						 15 => 'Category_talk:'
+						);
+			
+			$name = $ns[$nr];
+			
+			if ($urlencoded = true) {
+				return $name;
+			} else {
+				return str_replace('_', ' ', $name);
+			}
+		}
+		
 	}
 ?>
