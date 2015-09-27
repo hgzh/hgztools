@@ -91,8 +91,7 @@
 			case 'ec':   $t1 .= 'user_editcount '; break;
 		}
 		$t1 .= strtoupper($par_dir) . ';';
-		
-		$q1 = $mysqli->query($query);
+		$q1 = $db->query($t1);
 		
 		$page->openBlock('table', 'iw-table iw-full');
 		$page->addInline('tr', '<th>#</th><th>Name</th><th>Registration</th><th>Editcount</th><th>Edits/day</th>');
@@ -120,7 +119,7 @@
 			} else { 
 				$page->addInline('td', '');
 			}
-			$page->addInline('td', number_format( $line['user_editcount'], 0, '', ' ' ));
+			$page->addInline('td', number_format( $l1['user_editcount'], 0, '', ' ' ));
 			if ($datefound == true) { 
 				$page->addInline('td', number_format( $epd, 2, ',', ' ' ));
 			} else {
