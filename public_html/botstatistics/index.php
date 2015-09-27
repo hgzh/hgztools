@@ -29,13 +29,15 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_lang    = (isset($_GET['lang'])    && $_GET['lang']    != '') ? strtolower($_GET['lang'])    : '';
-	$par_project = (isset($_GET['project']) && $_GET['project'] != '') ? strtolower($_GET['project']) : '';
-	$par_sort    = (isset($_GET['sort'])    && $_GET['sort']    != '') ? strtolower($_GET['sort'])    : 'ec';
-	$par_dir     = (isset($_GET['dir'])     && $_GET['dir']     != '') ? strtolower($_GET['dir'])     : 'desc';
+	$par_lang     = (isset($_GET['lang'])     && $_GET['lang']     != '') ? strtolower($_GET['lang'])     : '';
+	$par_project  = (isset($_GET['project'])  && $_GET['project']  != '') ? strtolower($_GET['project'])  : '';
+	$par_sort     = (isset($_GET['sort'])     && $_GET['sort']     != '') ? strtolower($_GET['sort'])     : 'ec';
+	$par_dir      = (isset($_GET['dir'])      && $_GET['dir']      != '') ? strtolower($_GET['dir'])      : 'desc';
+	$par_editsmax = (isset($_GET['editsmax']) && $_GET['editsmax'] != '') ? $par_editsmax                 : '0';
+	$par_editsmin = (isset($_GET['editsmin']) && $_GET['editsmin'] != '') ? $par_editsmin                 : '0';
 	
 	$page->openBlock('div', 'iw-content');
-	$page->addInline('p', 'This tool generates a list of bots and former bots in a given project with their total editcount and registration date.');
+	$page->addInline('p', 'This tool generates a list of bots in a given project with their total editcount and registration date.');
 	$page->addInline('h2', 'Options');
 	
 	$optionForm = new HtmlForm('index.php', 'GET');
@@ -54,18 +56,15 @@
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td>');
-	$optionForm->addLabel('sort', 'Sort by');
+	$optionForm->addLabel('editsmax', 'Maximum edits');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addRadio('sort', 'name', 'name', $par_sort);
-	$optionForm->addRadio('sort', 'reg', 'registration', $par_sort);
-	$optionForm->addRadio('sort', 'ec', 'edit count', $par_sort, false);
+	$optionForm->addInput('editsmax', $par_editsmax, '', 0, false, 'number');
 	$optionForm->addHTML('</td></tr>');
-	
+
 	$optionForm->addHTML('<tr><td>');
-	$optionForm->addLabel('dir', 'Sort direction');
+	$optionForm->addLabel('editsmin', 'Minimum edits');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addRadio('dir', 'asc', 'ascending', $par_dir);
-	$optionForm->addRadio('dir', 'desc', 'descending', $par_dir, false);
+	$optionForm->addInput('editsmin', $par_editsmin, '', 0, false, 'number');
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td colspan="2">');
@@ -79,16 +78,23 @@
 	
 	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '') {
 		
-		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(name|reg|ec)$/', $par_sort) || !preg_match( '/^(asc|desc)$/', $par_dir) ) {
-			$page->setMessage('Please enter  valid language and project codes.', true);
+		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(name|reg|ec)$/', $par_sort) || !preg_match( '/^(asc|desc)$/', $par_dir) || !preg_match( '/^[0-9]{1,}$/', $par_editsmax) || !preg_match( '/^[0-9]{1,}$/', $par_editsmin) ) {
+			$page->setMessage('Please enter valid language and project codes.', true);
 		}
 
 		$page->openBlock('div', 'iw-content');		
 		$page->addInline('h2', 'Results');
 		
 		$db->replicaConnect(Database::getName($par_lang, $par_project));
-		$t1  = 'SELECT DISTINCT user_id, user_name, user_registration, user_editcount FROM user, user_groups ';
-		$t1 .= 'WHERE ug_group = \'bot\' AND ug_user = user_id ORDER BY ';
+		$t1  = 'SELECT DISTINCT user_id, user_name, user_registration, user_editcount FROM user, user_groups';
+		$t1 .= ' WHERE ug_group = \'bot\' AND ug_user = user_id';
+		if ($par_editsmin > 0) {
+			$t1 .= ' AND user_editcount >= ' . $par_editsmin;
+		}
+		if ($par_editsmax > 0) {
+			$t1 .= ' AND user_editcount <= ' . $par_editsmax;
+		}
+		$t1 .= ' ORDER BY ';
 		switch ($par_sort) {
 			case 'name': $t1 .= 'user_name '; break;
 			case 'reg':  $t1 .= 'user_registration '; break;
@@ -97,8 +103,20 @@
 		$t1 .= strtoupper($par_dir) . ';';
 		$q1 = $db->query($t1);
 		
+		if ($par_dir = 'asc') {
+			$sortNow = 'desc';
+		} else {
+			$sortNow = 'asc';
+		}
+		
 		$page->openBlock('table', 'iw-table iw-full');
-		$page->addInline('tr', '<th>#</th><th>Name</th><th>Registration</th><th>Editcount</th><th>Edits/day</th>');
+		$page->openBlock('tr');
+		$page->addInline('th', '#');
+		$page->addInline('th', '<a href="index.php?lang=' . $par_lang . '&project=' . $par_project . '&sort=name&dir=' . $sortNow . '">Name</a>');
+		$page->addInline('th', '<a href="index.php?lang=' . $par_lang . '&project=' . $par_project . '&sort=reg&dir=' . $sortNow . '">Registration</a>');
+		$page->addInline('th', '<a href="index.php?lang=' . $par_lang . '&project=' . $par_project . '&sort=ec&dir=' . $sortNow . '">Editcount</a>');
+		$page->addInline('th', 'Edits/day');
+		$page->closeBlock();
 		$datenow = new DateTime('now');
 		$counter = 1;
 		while ($l1 = $q1->fetch_assoc()) {
