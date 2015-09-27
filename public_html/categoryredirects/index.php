@@ -57,7 +57,7 @@
 	$optionForm->addHTML('</table>');
 	$optionForm->output();
 	
-	if (isset($par_lang) && $par_lang != '' & isset($par_project) && $par_project != '') {
+	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '') {
 		
 		if (!preg_match( '/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) ) {
 			$page->setMessage('Please enter  valid language and project codes.', true);
@@ -78,7 +78,7 @@
 			$page->addInline('tr', '<th>Name</th><th>Entries</th>');
 			while ($l1 = $q1->fetch_assoc()) {
 				$page->openBlock('tr');
-				$page->addInline('td', '<a href="http://' . $par_lang . '.' . $par_project . '.org/wiki/Category:' . $l1['page_title'] . '?redirect=no">' . $l1['page_title'] . '</a>');
+				$page->addInline('td', '<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/Category:' . $l1['page_title'] . '?redirect=no">' . $l1['page_title'] . '</a>');
 				$page->addInline('td', $l1['cl']);
 				$page->closeBlock();
 			}

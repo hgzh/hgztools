@@ -20,7 +20,7 @@
 	 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 	 */
 	
-	require_once( '/data/project/hgztools/public_html/general.php' );
+	require_once('/data/project/hgztools/public_html/general.php');
 	
 	// create new page object
 	$page = new HtmlPage('Bot statistics');
@@ -74,7 +74,7 @@
 	$optionForm->addHTML('</table>');
 	$optionForm->output();
 	
-	if (isset($par_lang) && $par_lang != '' & isset($par_project) && $par_project != '') {
+	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '') {
 	
 		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(name|reg|ec)$/', $par_sort) || !preg_match( '/^(asc|desc)$/', $par_dir) ) {
 			$page->setMessage('Please enter  valid language and project codes.', true);
@@ -111,9 +111,9 @@
 			
 			$page->openBlock('tr');
 			$page->addInline('td', $counter++);
-			$page->addInline('td', '<a href="http://' . $par_lang . '.' . $par_project . '.org/wiki/User:' . $l1['user_name'] . '">' . $l1['user_name'] . '</a>' .
-				' (<a href="http://' . $par_lang . '.' . $par_project . '.org/wiki/Special:Contributions/' . $l1['user_name'] . '">c</a> |' .
-				' <a href="http://' . $par_lang . '.' . $par_project . '.org/wiki/Special:Log/' . $l1['user_name'] . '">l</a> )');
+			$page->addInline('td', '<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/User:' . $l1['user_name'] . '">' . $l1['user_name'] . '</a>' .
+				' (<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/Special:Contributions/' . $l1['user_name'] . '">c</a> |' .
+				' <a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/Special:Log/' . $l1['user_name'] . '">l</a> )');
 			if ($datefound == true) { 
 				$page->addInline('td', $datereg->format('j M Y'));
 			} else { 
