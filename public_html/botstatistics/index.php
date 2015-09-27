@@ -33,8 +33,6 @@
 	$par_project  = (isset($_GET['project'])  && $_GET['project']  != '') ? strtolower($_GET['project'])  : '';
 	$par_sort     = (isset($_GET['sort'])     && $_GET['sort']     != '') ? strtolower($_GET['sort'])     : 'ec';
 	$par_dir      = (isset($_GET['dir'])      && $_GET['dir']      != '') ? strtolower($_GET['dir'])      : 'desc';
-	$par_editsmax = (isset($_GET['editsmax']) && $_GET['editsmax'] != '') ? $par_editsmax                 : '0';
-	$par_editsmin = (isset($_GET['editsmin']) && $_GET['editsmin'] != '') ? $par_editsmin                 : '0';
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool generates a list of bots in a given project with their total editcount and registration date.');
@@ -88,10 +86,10 @@
 		$db->replicaConnect(Database::getName($par_lang, $par_project));
 		$t1  = 'SELECT DISTINCT user_id, user_name, user_registration, user_editcount FROM user, user_groups';
 		$t1 .= ' WHERE ug_group = \'bot\' AND ug_user = user_id';
-		if ($par_editsmin > 0) {
+		if (isset($par_editsmin) && $par_editsmin > 0) {
 			$t1 .= ' AND user_editcount >= ' . $par_editsmin;
 		}
-		if ($par_editsmax > 0) {
+		if (isset($par_editsmax) && $par_editsmax > 0) {
 			$t1 .= ' AND user_editcount <= ' . $par_editsmax;
 		}
 		$t1 .= ' ORDER BY ';
