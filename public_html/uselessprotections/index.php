@@ -78,8 +78,9 @@
 		$page->addInline('h2', 'Results');
 		
 		$db->replicaConnect(Database::getName($par_lang, $par_project));
-		$t1  = 'SELECT page_title, page_namespace FROM page, page_restrictions WHERE pr_page = page_id AND pr_type = \'move\' AND pr_level = \'autoconfirmed\' ';
-		$t1 .= 'AND page_id NOT IN (SELECT page_id FROM page, page_restrictions WHERE pr_page = page_id AND pr_type = \'edit\');';
+		$t1  = 'SELECT page_title, page_namespace FROM page, page_restrictions WHERE pr_page = page_id AND pr_type = \'move\' AND pr_level = \'autoconfirmed\'';
+		$t1 .= ' AND page_id NOT IN (SELECT page_id FROM page, page_restrictions WHERE pr_page = page_id AND pr_type = \'edit\')';
+		$t1 .= ' ORDER BY page_namespace, page_title;';
 		
 		$q1 = $db->query($t1);
 		if ($q1->num_rows === 0) {
@@ -88,7 +89,7 @@
 			$page->openBlock('ul');
 			while ($l1 = $q1->fetch_assoc()) {
 				$page->addInline('li', '<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/' . Database::getNsNameFromNr($l1['page_namespace']) . $l1['page_title'] . '">' 
-									 . Database::getNsNameFromNr($l1['page_namespace'], false) . $l1['page_title'] . '</a>');
+									 . Database::getNsNameFromNr($l1['page_namespace'], false) . str_replace('_', ' ', $l1['page_title']) . '</a>');
 			}
 			$page->closeBlock();
 		}

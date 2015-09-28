@@ -103,7 +103,7 @@
 			if (isset( $l1['user_registration'] ) && $l1['user_registration'] != '') {
 				$datereg = DateTime::createFromFormat('YmdHis', $l1['user_registration']);
 				$dateitv = $datereg->diff($datenow);
-				$dateday = $dateitv->format( '%a' );
+				$dateday = $dateitv->format('%a');
 				$epd     = ($l1['user_editcount'] / $dateday);
 				
 				$datefound = true;
@@ -113,7 +113,7 @@
 			
 			$page->openBlock('tr');
 			$page->addInline('td', $counter++);
-			$page->addInline('td', '<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/User:' . $l1['user_name'] . '">' . $l1['user_name'] . '</a>' .
+			$page->addInline('td', '<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/User:' . $l1['user_name'] . '">' . str_replace('_', ' ', $l1['user_name']) . '</a>' .
 				' (<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/Special:Contributions/' . $l1['user_name'] . '">c</a> |' .
 				' <a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/Special:Log/' . $l1['user_name'] . '">l</a> )');
 			if ($datefound == true) { 

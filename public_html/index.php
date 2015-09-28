@@ -39,6 +39,10 @@
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('h2', 'Change log');
+	$page->addInline('h3', '2015-09-28');
+	$page->openBlock('ul');
+	$page->addInline('li', 'Useless protections: sort results by namespace and page title');
+	$page->closeBlock();
 	$page->addInline('h3', '2015-09-27');
 	$page->openBlock('ul');
 	$page->addInline('li', 'Bot statistics: changed sorting system');
