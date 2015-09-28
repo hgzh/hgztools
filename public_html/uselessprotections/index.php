@@ -40,6 +40,7 @@
 	$page->addInline('li', 'The page is not protected from editing through non-autoconfirmed users or sysops');
 	$page->closeBlock();
 	$page->addHTML('In most wikis, the autoconfirmed right is required for moving pages, so a single move protection for non-autoconfirmed users will never be effective.');
+	$page->closeBlock();
 	
 	$page->addInline('h2', 'Options');
 	

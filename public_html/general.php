@@ -77,7 +77,7 @@
 			
 			// footer setzen, Dokument beenden
 			$this->foot .= '</div><div class="iw-footer">';
-			$this->foot .= 'Powered by <a href="https://wikitech.wikimedia.org">Wikimedia Labs</a>.';
+			$this->foot .= '<a href="https://tools.wmflabs.org/hgztools">hgztools</a> powered by <a href="https://wikitech.wikimedia.org">Wikimedia Labs</a>.';
 			$this->foot .= '</div></div>';
 			$this->foot .= '</body>';
 			$this->foot .= '</html>';
