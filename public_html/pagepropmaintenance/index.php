@@ -60,7 +60,7 @@
 	$optionForm->addHTML('<option value="ns0-noindex">NOINDEX in main namespace</option>');
 	$optionForm->addHTML('<option value="ns0-index">INDEX in main namespace</option>');
 	$optionForm->addHTML('<option value="ns0-noeditsection">NOEDITSECTION in main namespace</option>');
-	$optionForm->addHTML('<option value="ns0-noeditsection">NEWSECTIONLINK in main namespace</option>');
+	$optionForm->addHTML('<option value="ns0-newsectionlink">NEWSECTIONLINK in main namespace</option>');
 	$optionForm->addHTML('<option value="staticredirect">STATICREDIRECT on non-redirect pages</option>');
 	$optionForm->addHTML('</select>');
 	$optionForm->addHTML('</td></tr>');
