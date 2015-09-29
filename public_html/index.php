@@ -31,6 +31,7 @@
 	$page->addInline('li', '<a href="botstatistics/">Bot statistics</a>');
 	$page->addInline('li', '<a href="categoryredirects/">Category redirects</a>');
 	$page->addInline('li', '<a href="contributors/">Contributors tool</a>');
+	$page->addInline('li', '<a href="pagepropmaintenance/">Page prop maintenance</a>');
 	$page->addInline('li', '<a href="uselessdefaultsorts/">Useless defaultsorts</a>');
 	$page->addInline('li', '<a href="uselessprotections/">Useless protections</a>');
 	$page->closeBlock();

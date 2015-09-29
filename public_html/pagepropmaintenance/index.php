@@ -34,7 +34,7 @@
 	$par_mode    = (isset($_GET['mode'])    && $_GET['mode']    != '') ? strtolower($_GET['mode'])    : 'ns0-noindex';
 	
 	$page->openBlock('div', 'iw-content');
-	$page->addInline('p', 'This tool allows to get information about some misused magic words in a specific project.');
+	$page->addInline('p', 'This tool allows to get information about some probably misused magic words in a specific project.');
 	
 	$page->addInline('h2', 'Options');
 	
@@ -58,7 +58,10 @@
 	$optionForm->addHTML('</td><td>');
 	$optionForm->addHTML('<select id="mode" name="mode">');
 	$optionForm->addHTML('<option value="ns0-noindex">NOINDEX in main namespace</option>');
-	$optionForm->addHTML('<option value="ns0-noeditsection">NOEDITSECTION in main namespace</option>');	
+	$optionForm->addHTML('<option value="ns0-index">INDEX in main namespace</option>');
+	$optionForm->addHTML('<option value="ns0-noeditsection">NOEDITSECTION in main namespace</option>');
+	$optionForm->addHTML('<option value="ns0-noeditsection">NEWSECTIONLINK in main namespace</option>');
+	$optionForm->addHTML('<option value="staticredirect">STATICREDIRECT on non-redirect pages</option>');
 	$optionForm->addHTML('</select>');
 	$optionForm->addHTML('</td></tr>');
 	
@@ -73,7 +76,7 @@
 	
 	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '' && isset($par_mode) && $par_project != '') {
 		
-		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(ns0\-noindex|ns0\-noeditsection)$/', $par_mode)) {
+		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(ns0\-noindex|ns0\-index|ns0\-noeditsection|ns0\-newsectionlink|staticredirect)$/', $par_mode)) {
 			$page->setMessage('Please enter valid language and project codes.', true);
 		}
 		
@@ -83,8 +86,11 @@
 		$db->replicaConnect(Database::getName($par_lang, $par_project));
 		$t1  = 'SELECT page_title, page_namespace, pp_value FROM page, page_props';
 		switch ($par_mode) {
-			case 'ns0-noindex'       : $t1 .= ' WHERE pp_propname = \'noindex\' AND pp_page = page_id AND page_namespace = 0'; break;
-			case 'ns0-noeditsection' : $t1 .= ' WHERE pp_propname = \'noeditsection\' AND pp_page = page_id AND page_namespace = 0'; break;
+			case 'ns0-noindex'        : $t1 .= ' WHERE pp_propname = \'noindex\' AND pp_page = page_id AND page_namespace = 0'; break;
+			case 'ns0-index'          : $t1 .= ' WHERE pp_propname = \'index\' AND pp_page = page_id AND page_namespace = 0'; break;
+			case 'ns0-noeditsection'  : $t1 .= ' WHERE pp_propname = \'noeditsection\' AND pp_page = page_id AND page_namespace = 0'; break;
+			case 'ns0-newsectionlink' : $t1 .= ' WHERE pp_propname = \'newsectionlink\' AND pp_page = page_id AND page_namespace = 0'; break;
+			case 'staticredirect'     : $t1 .= ' WHERE pp_propname = \'staticredirect\' AND pp_page = page_id AND page_is_redirect = 0'; break;
 		}
 		$t1 .= ' ORDER BY page_title;';
 		
