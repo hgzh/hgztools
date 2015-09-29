@@ -29,7 +29,7 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_mode = $page->getParam('mode', '', '/^(lesenswert|exzellent|informativ|portal)$/', true);
+	$par_mode = $page->getParam('mode', '', '/^(lesenswert|exzellent|informativ|portal)$/');
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'Mit diesem Werkzeug lassen sich Unterschiede zwischen den lokalen Auszeichnungsvorlagen und den Daten auf Wikidata feststellen.');

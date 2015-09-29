@@ -29,8 +29,8 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_lang    = $page->getParam('lang',    '', '/^[a-z]{1,7}$/',  true);
-	$par_project = $page->getParam('project', '', '/^[a-z]{1,15}$/', true);
+	$par_lang    = $page->getParam('lang',    '', '/^[a-z]{1,7}$/');
+	$par_project = $page->getParam('project', '', '/^[a-z]{1,15}$/');
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool generates a list of DEFAULTSORT keys that match the page title exactly.');

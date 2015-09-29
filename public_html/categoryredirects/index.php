@@ -29,9 +29,9 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_lang    = $page->getParam('lang',    '',     '/^[a-z]{1,7}$/',  true);
-	$par_project = $page->getParam('project', '',     '/^[a-z]{1,15}$/', true);
-	$par_sort    = $page->getParam('sort',    'name', '/^(name|entries|length)$/', true);
+	$par_lang    = $page->getParam('lang',    '',     '/^[a-z]{1,7}$/');
+	$par_project = $page->getParam('project', '',     '/^[a-z]{1,15}$/');
+	$par_sort    = $page->getParam('sort',    'name', '/^(name|entries|length)$/');
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool shows a list of categories that redirect to another category in the given project and the number of entries in it.');

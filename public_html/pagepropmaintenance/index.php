@@ -29,9 +29,9 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_lang    = $page->getParam('lang',    '', '/^[a-z]{1,7}$/',  true);
-	$par_project = $page->getParam('project', '', '/^[a-z]{1,15}$/', true);
-	$par_mode    = $page->getParam('mode',    '', '/^(ns0\-noindex|ns0\-index|ns0\-noeditsection|ns0\-newsectionlink|staticredirect)$/', true);
+	$par_lang    = $page->getParam('lang',    '', '/^[a-z]{1,7}$/');
+	$par_project = $page->getParam('project', '', '/^[a-z]{1,15}$/');
+	$par_mode    = $page->getParam('mode',    '', '/^(ns0\-noindex|ns0\-index|ns0\-noeditsection|ns0\-newsectionlink|staticredirect)$/');
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool allows to get information about some probably misused magic words in a specific project.');

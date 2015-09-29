@@ -29,10 +29,10 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_lang    = $page->getParam('lang',    '',     '/^[a-z]{1,7}$/',  true);
-	$par_project = $page->getParam('project', '',     '/^[a-z]{1,15}$/', true);
-	$par_sort    = $page->getParam('sort',    'ec',   '/^(name|reg|ec)$/', true);
-	$par_dir     = $page->getParam('dir',     'desc', '/^(asc|desc)$/', true);
+	$par_lang    = $page->getParam('lang',    '',     '/^[a-z]{1,7}$/');
+	$par_project = $page->getParam('project', '',     '/^[a-z]{1,15}$/');
+	$par_sort    = $page->getParam('sort',    'ec',   '/^(name|reg|ec)$/');
+	$par_dir     = $page->getParam('dir',     'desc', '/^(asc|desc)$/');
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool generates a list of bots in a given project with their total editcount and registration date.');
