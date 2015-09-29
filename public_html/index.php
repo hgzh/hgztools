@@ -36,6 +36,11 @@
 	$page->addInline('li', '<a href="uselessprotections/">Useless protections</a>');
 	$page->closeBlock();
 	
+	$page->addInline('h2', 'Tools for German Wikipedia');
+	$page->openBlock('ul');
+	$page->addInline('li', '<a href="wikidata-badges/">Wikidata-Auszeichnungs-Abgleich</a>');
+	$page->closeBlock();
+	
 	$page->addInline('p', 'Contact: <a href="https://de.wikipedia.org/wiki/User_talk:Hgzh">hgzh @ de.wikipedia</a>, Source: <a href="https://github.com/hgzh">hgzh @ github.com</a>');
 	$page->closeBlock();
 	
@@ -45,6 +50,7 @@
 	$page->openBlock('ul');
 	$page->addInline('li', 'Added Useless defaultsort tool');
 	$page->addInline('li', 'Added Page prop maintenance');
+	$page->addInline('li', 'Added Wikidata badges maintenance tool for German Wikipedia');
 	$page->closeBlock();
 	$page->addInline('h3', '2015-09-28');
 	$page->openBlock('ul');

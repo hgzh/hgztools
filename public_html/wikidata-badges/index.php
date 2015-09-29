@@ -34,7 +34,7 @@
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'Mit diesem Werkzeug lassen sich Unterschiede zwischen den lokalen Auszeichnungsvorlagen und den Daten auf Wikidata feststellen.');
 	
-	$page->addInline('h2', 'Options');
+	$page->addInline('h2', 'Optionen');
 	
 	$optionForm = new HtmlForm('index.php', 'GET');
 	$optionForm->addHTML('<table class="iw-nostyle">');
@@ -46,11 +46,12 @@
 	$optionForm->addHTML('<option value="lesenswert">lesenswerte Artikel</option>');
 	$optionForm->addHTML('<option value="exzellent">exzellente Artikel</option>');
 	$optionForm->addHTML('<option value="informativ">informative Listen</option>');
+	$optionForm->addHTML('<option value="portal">informatives Portal</option>');
 	$optionForm->addHTML('</select>');
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td colspan="2">');
-	$optionForm->addButton('submit', 'View list');
+	$optionForm->addButton('submit', 'Abgleichen');
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('</table>');
@@ -60,7 +61,7 @@
 	
 	if (isset($par_mode) && $par_mode != '') {
 		
-		if (!preg_match('/^(lesenswert|exzellent|informativ)$/', $par_mode)) {
+		if (!preg_match('/^(lesenswert|exzellent|informativ|portal)$/', $par_mode)) {
 			$page->setMessage('Bitte eine Art der Auszeichnung wählen.', true);
 		}
 		
@@ -73,6 +74,7 @@
 			case 'lesenswert' : $t1 .= ' WHERE pp_propname = \'wikibase-badge-Q17437798\' AND pp_page = page_id AND page_namespace = 0'; break;
 			case 'exzellent'  : $t1 .= ' WHERE pp_propname = \'wikibase-badge-Q17437796\' AND pp_page = page_id AND page_namespace = 0'; break;
 			case 'informativ' : $t1 .= ' WHERE pp_propname = \'wikibase-badge-Q17506997\' AND pp_page = page_id AND page_namespace = 0'; break;
+			case 'portal'     : $t1 .= ' WHERE pp_propname = \'wikibase-badge-Q17580674\' AND pp_page = page_id AND page_namespace = 100'; break;
 		}
 		$t1 .= ' ORDER BY page_title;';
 
@@ -81,6 +83,7 @@
 			case 'lesenswert' : $t2 .= ' WHERE cl_to = \'Wikipedia:Lesenswert\' AND cl_from = page_id AND page_namespace = 0'; break;
 			case 'exzellent'  : $t2 .= ' WHERE cl_to = \'Wikipedia:Exzellent\' AND cl_from = page_id AND page_namespace = 0'; break;
 			case 'informativ' : $t2 .= ' WHERE cl_to = \'Wikipedia:Informative_Liste\' AND cl_from = page_id AND page_namespace = 0'; break;
+			case 'portal'     : $t2 .= ' WHERE cl_to = \'Wikipedia:Informatives_Portal\' AND cl_from = page_id AND page_namespace = 100'; break;
 		}
 		$t2 .= ' ORDER BY page_title;';
 		
@@ -103,18 +106,26 @@
 		$diff_nowp = array_diff($r1, $r2);
 		
 		if (count($diff_nowd) != 0) {
-			$page->addInline('h3', 'Lokal ausgezeichnet, aber nicht auf Wikidata');
+			$page->addInline('h3', 'Lokal als ' . $par_mode . ' ausgezeichnet, aber nicht auf Wikidata');
 			$page->openBlock('ul');
 			foreach ($diff_nowd as $v1) {
-				$page->addInline('li', '<a href="https://de.wikipedia.org/wiki/' . $v1 . '">' . $v1 . '</a>');
+				if ($par_mode == 'portal') {
+					$page->addInline('li', '<a href="https://de.wikipedia.org/wiki/Portal:' . $v1 . '">Portal:' . str_replace('_', ' ', $v1) . '</a>');
+				} else {
+					$page->addInline('li', '<a href="https://de.wikipedia.org/wiki/' . $v1 . '">' . str_replace('_', ' ', $v1) . '</a>');
+				}
 			}
 			$page->closeBlock();
 		}
 		if (count($diff_nowp) != 0) {
-			$page->addInline('h3', 'Auf Wikidata ausgezeichnet, aber nicht lokal');
+			$page->addInline('h3', 'Auf Wikidata als ' . $par_mode . '  ausgezeichnet, aber nicht lokal');
 			$page->openBlock('ul');
 			foreach ($diff_nowp as $v1) {
-				$page->addInline('li', '<a href="https://de.wikipedia.org/wiki/' . $v1 . '">' . $v1 . '</a>');
+				if ($par_mode == 'portal') {
+					$page->addInline('li', '<a href="https://de.wikipedia.org/wiki/Portal:' . $v1 . '">Portal:' . str_replace('_', ' ', $v1) . '</a>');
+				} else {
+					$page->addInline('li', '<a href="https://de.wikipedia.org/wiki/' . $v1 . '">' . str_replace('_', ' ', $v1) . '</a>');
+				}
 			}
 			$page->closeBlock();
 		}
