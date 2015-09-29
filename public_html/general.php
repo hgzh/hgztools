@@ -240,11 +240,9 @@
 				if (!preg_match($validation, $ret)) {
 					$this->setMessage('Validation failed for parameter ' . $param, true);
 					return false;
-				} else {
-					return $ret;
 				}
 			}
-			
+			return $ret;
 		}
 		
 	}
