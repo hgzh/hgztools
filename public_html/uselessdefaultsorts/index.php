@@ -83,8 +83,8 @@
 			$page->addInline('tr', '<th>Page</th><th>Defaultsort</th>');
 			while ($l1 = $q1->fetch_assoc()) {
 				$page->openBlock('tr');
-				$page->addInline('td', '<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/' . Database::getNsNameFromNr($l1['page_namespace']) . $l1['page_title'] . '">' 
-									 . Database::getNsNameFromNr($l1['page_namespace'], false) . str_replace('_', ' ', $l1['page_title']) . '</a>');
+				$page->addInline('td', Hgz::buildWikilink($par_lang, $par_project, Database::getNsNameFromNr($l1['page_namespace']) . $l1['page_title'], 
+				                    Database::getNsNameFromNr($l1['page_namespace'], false) . str_replace('_', ' ', $l1['page_title'])));
 				$page->addInline('td', $l1['pp_value']);
 				$page->closeBlock();
 			}

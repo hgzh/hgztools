@@ -94,7 +94,7 @@
 			$page->closeBlock();
 			while ($l1 = $q1->fetch_assoc()) {
 				$page->openBlock('tr');
-				$page->addInline('td', '<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/Category:' . $l1['page_title'] . '?redirect=no">' . str_replace('_', ' ', $l1['page_title']) . '</a>');
+				$page->addInline('td', Hgz::buildWikilink($par_lang, $par_project, 'Category:' . $l1['page_title'], str_replace('_', ' ', $l1['page_title']), 'redirect=no'));
 				$page->addInline('td', $l1['cl']);
 				$page->addInline('td', $l1['page_len']);
 				$page->closeBlock();

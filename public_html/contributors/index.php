@@ -103,7 +103,7 @@
 			$page->addInline('p', 'there were no results for this query', 'iw-info');
 		} else {
 			$page->addInline('p', 'found ' . $q1->num_rows . ' revisions for article ' . 
-				'<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/' . $par_page . '">' . str_replace('_', ' ', $par_page) . '</a> (<a href="https://' . $par_lang . '.' . $par_project . '.org/w/index.php?title=' . $par_page . '&action=history">History</a>).');
+				Hgz::buildWikilink($par_lang, $par_project, $par_page, str_replace('_', ' ', $par_page)) . '(<a href="https://' . $par_lang . '.' . $par_project . '.org/w/index.php?title=' . $par_page . '&action=history">History</a>).');
 			$page->openBlock('div', 'iw-code');
 			while ($l1 = $q1->fetch_assoc()) {
 				$datetime = DateTime::createFromFormat('YmdHis', $l1['rev_timestamp']);

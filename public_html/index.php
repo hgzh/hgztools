@@ -41,7 +41,7 @@
 	$page->addInline('li', '<a href="wikidata-badges/">Wikidata-Auszeichnungs-Abgleich</a>');
 	$page->closeBlock();
 	
-	$page->addInline('p', 'Contact: <a href="https://de.wikipedia.org/wiki/User_talk:Hgzh">hgzh @ de.wikipedia</a>, Source: <a href="https://github.com/hgzh">hgzh @ github.com</a>');
+	$page->addInline('p', 'Contact: ' . Hgz::buildWikilink('de', 'wikipedia', 'User talk:Hgzh', 'hgzh @ de.wikipedia') . ', Source: <a href="https://github.com/hgzh">hgzh @ github.com</a>');
 	$page->closeBlock();
 	
 	$page->openBlock('div', 'iw-content');

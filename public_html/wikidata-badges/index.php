@@ -29,7 +29,7 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_mode    = (isset($_GET['mode'])    && $_GET['mode']    != '') ? strtolower($_GET['mode'])    : 'lesenswert';
+	$par_mode = Hgz::getParam($_GET['mode'], '', '/^(lesenswert|exzellent|informativ|portal)?$/', true);
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'Mit diesem Werkzeug lassen sich Unterschiede zwischen den lokalen Auszeichnungsvorlagen und den Daten auf Wikidata feststellen.');
@@ -110,9 +110,9 @@
 			$page->openBlock('ul');
 			foreach ($diff_nowd as $v1) {
 				if ($par_mode == 'portal') {
-					$page->addInline('li', '<a href="https://de.wikipedia.org/wiki/Portal:' . $v1 . '">Portal:' . str_replace('_', ' ', $v1) . '</a>');
+					$page->addInline('li', Hgz::buildWikilink('de', 'wikipedia', 'Portal:' . $v1, 'Portal:' . str_replace('_', ' ', $v1)));
 				} else {
-					$page->addInline('li', '<a href="https://de.wikipedia.org/wiki/' . $v1 . '">' . str_replace('_', ' ', $v1) . '</a>');
+					$page->addInline('li', Hgz::buildWikilink('de', 'wikipedia', $v1, str_replace('_', ' ', $v1)));
 				}
 			}
 			$page->closeBlock();
@@ -122,9 +122,9 @@
 			$page->openBlock('ul');
 			foreach ($diff_nowp as $v1) {
 				if ($par_mode == 'portal') {
-					$page->addInline('li', '<a href="https://de.wikipedia.org/wiki/Portal:' . $v1 . '">Portal:' . str_replace('_', ' ', $v1) . '</a>');
+					$page->addInline('li', Hgz::buildWikilink('de', 'wikipedia', 'Portal:' . $v1, 'Portal:' . str_replace('_', ' ', $v1)));
 				} else {
-					$page->addInline('li', '<a href="https://de.wikipedia.org/wiki/' . $v1 . '">' . str_replace('_', ' ', $v1) . '</a>');
+					$page->addInline('li', Hgz::buildWikilink('de', 'wikipedia', $v1, str_replace('_', ' ', $v1)));
 				}
 			}
 			$page->closeBlock();

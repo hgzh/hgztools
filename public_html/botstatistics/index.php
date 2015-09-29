@@ -113,9 +113,9 @@
 			
 			$page->openBlock('tr');
 			$page->addInline('td', $counter++);
-			$page->addInline('td', '<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/User:' . $l1['user_name'] . '">' . str_replace('_', ' ', $l1['user_name']) . '</a>' .
-				' (<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/Special:Contributions/' . $l1['user_name'] . '">c</a> |' .
-				' <a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/Special:Log/' . $l1['user_name'] . '">l</a> )');
+			$page->addInline('td', Hgz::buildWikilink($par_lang, $par_project, 'User:' . $l1['user_name'], str_replace('_', ' ', $l1['user_name'])) .
+				           ' ( ' . Hgz::buildWikilink($par_lang, $par_project, 'Special:Contributions/' . $l1['user_name'], 'c') . ' | ' .
+				                   Hgz::buildWikilink($par_lang, $par_project, 'Special:Log/' . $l1['user_name'], 'l') . ' )');
 			if ($datefound == true) { 
 				$page->addInline('td', $datereg->format('j M Y'));
 			} else { 

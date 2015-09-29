@@ -88,8 +88,8 @@
 		} else {
 			$page->openBlock('ul');
 			while ($l1 = $q1->fetch_assoc()) {
-				$page->addInline('li', '<a href="https://' . $par_lang . '.' . $par_project . '.org/wiki/' . Database::getNsNameFromNr($l1['page_namespace']) . $l1['page_title'] . '">' 
-									 . Database::getNsNameFromNr($l1['page_namespace'], false) . str_replace('_', ' ', $l1['page_title']) . '</a>');
+				$page->addInline('li', Hgz::buildWikilink($par_lang, $par_project, Database::getNsNameFromNr($l1['page_namespace']) . $l1['page_title'], 
+				                    Database::getNsNameFromNr($l1['page_namespace'], false) . str_replace('_', ' ', $l1['page_title'])));
 			}
 			$page->closeBlock();
 		}

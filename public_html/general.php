@@ -420,13 +420,11 @@
 		 *
 		 */		
 		public static function getName($lang, $project, $separator = '-') {
-			if( $project == 'wikipedia' ) {
+			if ($project == 'wikipedia') {
 				$project = 'wiki';
-			}
-			if( $project == 'wikimedia' ) {
+			} elseif ($project == 'wikimedia') {
 				$project = 'wiki';
-			}
-			if( $project == 'wikidata' ) {
+			} elseif($project == 'wikidata') {
 				$project = 'wiki';
 				$lang = 'wikidata';
 			}
@@ -467,6 +465,57 @@
 			} else {
 				return str_replace('_', ' ', $name);
 			}
+		}
+		
+	}
+	
+	/**
+	 * ##### CLASS Hgz CLASS #####
+	 * Klasse für Hilfsfunktionen
+	 *
+	 * @erweitert
+	 * - mysqli
+	 */
+	class Hgz {
+		
+		/**
+		 * creates a link to a wiki page
+		 *
+		 */
+		public static function buildWikilink($lang, $project, $page, $title = '', $urlquery = '') {
+			$ret  = '<a href="https://' . $lang . '.' . $project . '.org/wiki/' . $page;
+			if ($urlquery != '') {
+				$ret .= '?' . $urlquery;
+			}
+			$ret .= '" title="';
+			if ($title != '') { $ret .= $title; } else { $ret .= $page; }
+			$ret .= '">';
+			if ($title != '') { $ret .= $title; } else { $ret .= $page; }
+			$ret .= '</a>';
+			
+			return $ret;
+		}
+
+		/**
+		 * creates a link to a wiki page
+		 *
+		 */
+		public static function getParam($param, $default = '', $validation = '', $lcase = true) {
+			if ($param == '' && $default != '') {
+				$param = $default;
+			}
+			if ($lcase == true) {
+				$param = strtolower($param);
+			}
+			$ret = htmlspecialchars($param);
+			if ($validation != '') {
+				if (!preg_match($validation, $ret)) {
+					return false;
+				} else {
+					return $ret;
+				}
+			}
+			
 		}
 		
 	}
