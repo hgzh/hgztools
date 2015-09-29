@@ -56,10 +56,10 @@
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('mode', 'Mode');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addHTML('<select id="mode" name="mode">')
+	$optionForm->addHTML('<select id="mode" name="mode">');
 	$optionForm->addHTML('<option value="ns0-noindex">NOINDEX in main namespace</option>');
 	$optionForm->addHTML('<option value="ns0-noeditsection">NOEDITSECTION in main namespace</option>');	
-	$optionForm->addHTML('</select>')
+	$optionForm->addHTML('</select>');
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td colspan="2">');
