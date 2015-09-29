@@ -23,7 +23,7 @@
 	require_once('/data/project/hgztools/public_html/general.php');
 	
 	// create new page object
-	$page = new HtmlPage('Useless defaultsorts');
+	$page = new HtmlPage('Page prop maintenance');
 
 	// create new database object
 	$db = new Database();
@@ -63,7 +63,7 @@
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td colspan="2">');
-	$optionForm->addButton('submit', 'View useless defaultsorts');
+	$optionForm->addButton('submit', 'View list');
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('</table>');
@@ -73,7 +73,7 @@
 	
 	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '' && isset($par_mode) && $par_project != '') {
 		
-		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(ns0-noindex|ns0-noeditsection)$/', $par_project)) {
+		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(ns0\-noindex|ns0\-noeditsection)$/', $par_project)) {
 			$page->setMessage('Please enter valid language and project codes.', true);
 		}
 		
