@@ -29,10 +29,10 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_lang     = (isset($_GET['lang'])     && $_GET['lang']     != '') ? strtolower($_GET['lang'])     : '';
-	$par_project  = (isset($_GET['project'])  && $_GET['project']  != '') ? strtolower($_GET['project'])  : '';
-	$par_sort     = (isset($_GET['sort'])     && $_GET['sort']     != '') ? strtolower($_GET['sort'])     : 'ec';
-	$par_dir      = (isset($_GET['dir'])      && $_GET['dir']      != '') ? strtolower($_GET['dir'])      : 'desc';
+	$par_lang    = $page->getParam('lang',    '',     '/^[a-z]{1,7}$/',  true);
+	$par_project = $page->getParam('project', '',     '/^[a-z]{1,15}$/', true);
+	$par_sort    = $page->getParam('sort',    'ec',   '/^(name|reg|ec)$/', true);
+	$par_dir     = $page->getParam('dir',     'desc', '/^(asc|desc)$/', true);
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool generates a list of bots in a given project with their total editcount and registration date.');
@@ -63,11 +63,6 @@
 	$page->closeBlock();
 	
 	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '') {
-		
-		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(name|reg|ec)$/', $par_sort) || !preg_match( '/^(asc|desc)$/', $par_dir) ) {
-			$page->setMessage('Please enter valid language and project codes.', true);
-		}
-
 		$page->openBlock('div', 'iw-content');		
 		$page->addInline('h2', 'Results');
 		

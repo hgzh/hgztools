@@ -29,11 +29,11 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_lang    = (isset($_GET['lang'])    && $_GET['lang']    != '') ? strtolower($_GET['lang'])        : '';
-	$par_project = (isset($_GET['project']) && $_GET['project'] != '') ? strtolower($_GET['project'])     : '';
-	$par_page    = (isset($_GET['page'])    && $_GET['page']    != '') ? htmlspecialchars($_GET['page'])  : '';
-	$par_since   = (isset($_GET['since'])   && $_GET['since']   != '') ? htmlspecialchars($_GET['since']) : '0000-00-00';
-	$par_until   = (isset($_GET['until'])   && $_GET['until']   != '') ? htmlspecialchars($_GET['until']) : '0000-00-00';
+	$par_lang    = $page->getParam('lang',    '',           '/^[a-z]{1,7}$/',  true);
+	$par_project = $page->getParam('project', '',           '/^[a-z]{1,15}$/', true);
+	$par_page    = $page->getParam('page',    '');
+	$par_since   = $page->getParam('since',   '0000-00-00', '/^\d{4}-\d{2}-\d{2}$/');
+	$par_until   = $page->getParam('until',   '0000-00-00', '/^\d{4}-\d{2}-\d{2}$/');
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool creates a list of contributors to a given article on a given project in wikitext.');
@@ -82,11 +82,6 @@
 	$page->closeBlock();
 	
 	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '' && isset($par_page) && $par_page != '') {
-
-		if (!preg_match( '/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $par_since) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $par_until) ) {
-			$page->setMessage('Please enter valid language and project codes.', true);
-		}
-		
 		$page->openBlock('div', 'iw-content');
 		$page->addInline('h2', 'Results');
 		
@@ -137,7 +132,6 @@
 		
 		$q1->close();
 		$page->closeBlock();
-	
 	}
 	
 	$db->close();
