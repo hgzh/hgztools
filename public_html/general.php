@@ -223,6 +223,28 @@
 			echo $this->foot;
 		}
 		
+		/**
+		 * gets a param from http
+		 *
+		 */
+		public function getParam($param, $default = '', $validation = '', $lcase = true) {
+			if ($param == '' && $default != '') {
+				$param = $default;
+			}
+			if ($lcase == true) {
+				$param = strtolower($param);
+			}
+			$ret = htmlspecialchars($param);
+			if ($validation != '') {
+				if (!preg_match($validation, $ret)) {
+					$this->setMessage('Validation failed for parameter' . $param, true);
+				} else {
+					return $ret;
+				}
+			}
+			
+		}
+		
 	}
 	
 	/**
@@ -370,6 +392,7 @@
 				return $this->form;
 			}
 		}
+		
 	}
 	
 	/**
@@ -494,28 +517,6 @@
 			$ret .= '</a>';
 			
 			return $ret;
-		}
-
-		/**
-		 * creates a link to a wiki page
-		 *
-		 */
-		public static function getParam($param, $default = '', $validation = '', $lcase = true) {
-			if ($param == '' && $default != '') {
-				$param = $default;
-			}
-			if ($lcase == true) {
-				$param = strtolower($param);
-			}
-			$ret = htmlspecialchars($param);
-			if ($validation != '') {
-				if (!preg_match($validation, $ret)) {
-					return false;
-				} else {
-					return $ret;
-				}
-			}
-			
 		}
 		
 	}

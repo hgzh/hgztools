@@ -29,9 +29,9 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_lang    = (isset($_GET['lang']   ) && $_GET['lang']    != '') ? strtolower($_GET['lang']   ) : '';
-	$par_project = (isset($_GET['project']) && $_GET['project'] != '') ? strtolower($_GET['project']) : '';
-	$par_mode    = (isset($_GET['mode'])    && $_GET['mode']    != '') ? strtolower($_GET['mode'])    : 'ns0-noindex';
+	$par_lang    = $page->getParam('lang',    '', '/^[a-z]{1,7}$/',  true);
+	$par_project = $page->getParam('project', '', '/^[a-z]{1,15}$/', true);
+	$par_mode    = $page->getParam('mode',    '', '/^(ns0\-noindex|ns0\-index|ns0\-noeditsection|ns0\-newsectionlink|staticredirect)$/', true);
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool allows to get information about some probably misused magic words in a specific project.');
@@ -75,11 +75,6 @@
 	$page->closeBlock();
 	
 	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '' && isset($par_mode) && $par_project != '') {
-		
-		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(ns0\-noindex|ns0\-index|ns0\-noeditsection|ns0\-newsectionlink|staticredirect)$/', $par_mode)) {
-			$page->setMessage('Please enter valid language and project codes.', true);
-		}
-		
 		$page->openBlock('div', 'iw-content');
 		$page->addInline('h2', 'Results');
 		
@@ -112,7 +107,6 @@
 		
 		$q1->close();
 		$page->closeBlock();
-
 	}
 	
 	$db->close();

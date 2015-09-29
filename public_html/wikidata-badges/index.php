@@ -29,7 +29,7 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_mode = Hgz::getParam($_GET['mode'], '', '/^(lesenswert|exzellent|informativ|portal)?$/', true);
+	$par_mode = $page->getParam('mode', '', '/^(lesenswert|exzellent|informativ|portal)?$/', true);
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'Mit diesem Werkzeug lassen sich Unterschiede zwischen den lokalen Auszeichnungsvorlagen und den Daten auf Wikidata feststellen.');
@@ -60,11 +60,6 @@
 	$page->closeBlock();
 	
 	if (isset($par_mode) && $par_mode != '') {
-		
-		if (!preg_match('/^(lesenswert|exzellent|informativ|portal)$/', $par_mode)) {
-			$page->setMessage('Bitte eine Art der Auszeichnung wählen.', true);
-		}
-		
 		$page->openBlock('div', 'iw-content');
 		$page->addInline('h2', 'Ergebnisse');
 		
@@ -133,7 +128,6 @@
 		$q1->close();
 		$q2->close();
 		$page->closeBlock();
-
 	}
 	
 	$db->close();
