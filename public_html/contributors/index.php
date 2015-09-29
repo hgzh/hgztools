@@ -31,7 +31,7 @@
 	// get parameters from url
 	$par_lang    = $page->getParam('lang',    '',           '/^[a-z]{1,7}$/',  true);
 	$par_project = $page->getParam('project', '',           '/^[a-z]{1,15}$/', true);
-	$par_page    = $page->getParam('page',    '');
+	$par_page    = $page->getParam('page');
 	$par_since   = $page->getParam('since',   '0000-00-00', '/^\d{4}-\d{2}-\d{2}$/');
 	$par_until   = $page->getParam('until',   '0000-00-00', '/^\d{4}-\d{2}-\d{2}$/');
 	
