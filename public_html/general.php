@@ -229,14 +229,14 @@
 		 */
 		public function getParam($param, $default = '', $validation = '', $lcase = true) {
 			$ret = $_GET[$param];
-			if ($ret == '' && $default != '') {
+			if ($ret == '' && isset($default) && $default != '') {
 				$ret = $default;
 			}
 			if ($lcase == true) {
 				$ret = strtolower($ret);
 			}
 			$ret = htmlspecialchars($ret);
-			if ($validation != '' && $ret != '') {
+			if (isset($validation) && $validation != '' && $ret != '') {
 				if (!preg_match($validation, $ret)) {
 					$this->setMessage('Validation failed for parameter ' . $param, true);
 					return false;
