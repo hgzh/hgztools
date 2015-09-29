@@ -228,16 +228,18 @@
 		 *
 		 */
 		public function getParam($param, $default = '', $validation = '', $lcase = true) {
-			if ($param == '' && $default != '') {
-				$param = $default;
+			$ret = $_GET[$param];
+			if ($ret == '' && $default != '') {
+				$ret = $default;
 			}
 			if ($lcase == true) {
-				$param = strtolower($param);
+				$ret = strtolower($ret);
 			}
-			$ret = htmlspecialchars($param);
-			if ($validation != '') {
+			$ret = htmlspecialchars($ret);
+			if ($validation != '' && $ret != '') {
 				if (!preg_match($validation, $ret)) {
-					$this->setMessage('Validation failed for parameter' . $param, true);
+					$this->setMessage('Validation failed for parameter ' . $param, true);
+					return false;
 				} else {
 					return $ret;
 				}

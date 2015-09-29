@@ -29,8 +29,8 @@
 	$db = new Database();
 	
 	// get parameters from url
-	$par_lang    = (isset($_GET['lang']   ) && $_GET['lang']    != '') ? strtolower($_GET['lang']   ) : '';
-	$par_project = (isset($_GET['project']) && $_GET['project'] != '') ? strtolower($_GET['project']) : '';
+	$par_lang    = $page->getParam('lang',    '', '/^[a-z]{1,7}$/',  true);
+	$par_project = $page->getParam('project', '', '/^[a-z]{1,15}$/', true);
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool generates a list of DEFAULTSORT keys that match the page title exactly.');
@@ -62,11 +62,6 @@
 	$page->closeBlock();
 	
 	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '') {
-		
-		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project)) {
-			$page->setMessage('Please enter valid language and project codes.', true);
-		}
-		
 		$page->openBlock('div', 'iw-content');
 		$page->addInline('h2', 'Results');
 		
@@ -93,7 +88,6 @@
 		
 		$q1->close();
 		$page->closeBlock();
-
 	}
 	
 	$db->close();
