@@ -31,6 +31,7 @@
 	$page->addInline('li', '<a href="botstatistics/">Bot statistics</a>');
 	$page->addInline('li', '<a href="categoryredirects/">Category redirects</a>');
 	$page->addInline('li', '<a href="contributors/">Contributors tool</a>');
+	$page->addInline('li', '<a href="uselessdefaultsorts/">Useless defaultsorts</a>');
 	$page->addInline('li', '<a href="uselessprotections/">Useless protections</a>');
 	$page->closeBlock();
 	
@@ -39,6 +40,11 @@
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('h2', 'Change log');
+	$page->addInline('h3', '2015-09-29');
+	$page->openBlock('ul');
+	$page->addInline('li', 'Added Useless defaultsort tool');
+	$page->addInline('li', 'Added Page prop maintenance');
+	$page->closeBlock();
 	$page->addInline('h3', '2015-09-28');
 	$page->openBlock('ul');
 	$page->addInline('li', 'Useless protections: sort results by namespace and page title');

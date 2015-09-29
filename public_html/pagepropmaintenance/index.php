@@ -73,7 +73,7 @@
 	
 	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '' && isset($par_mode) && $par_project != '') {
 		
-		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(ns0\-noindex|ns0\-noeditsection)$/', $par_project)) {
+		if (!preg_match('/^[a-z]{1,7}$/', $par_lang) || !preg_match('/^[a-z]{1,15}$/', $par_project) || !preg_match('/^(ns0\-noindex|ns0\-noeditsection)$/', $par_mode)) {
 			$page->setMessage('Please enter valid language and project codes.', true);
 		}
 		
