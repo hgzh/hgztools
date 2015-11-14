@@ -228,7 +228,11 @@
 		 *
 		 */
 		public function getParam($param, $default = '', $validation = '', $lcase = true) {
-			$ret = $_GET[$param];
+			if (isset($_GET[$param])) {
+				$ret = $_GET[$param];
+			} else {
+				$ret = '';
+			}
 			if ($ret == '' && isset($default) && $default != '') {
 				$ret = $default;
 			}

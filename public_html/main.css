@@ -75,7 +75,7 @@ ul.iw-navigation a:hover {
 	padding: 0.5em;
 }
 
-input {
+input, select {
 	margin: 0.1em 0.5em 0.1em 0.5em;
 	padding: 0.2em;
 }
