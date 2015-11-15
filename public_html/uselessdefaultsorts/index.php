@@ -68,7 +68,7 @@
 		$db->replicaConnect(Database::getName($par_lang, $par_project));
 		$t1  = 'SELECT page_title, page_namespace, pp_value FROM page, page_props';
 		$t1 .= ' WHERE pp_propname = \'defaultsort\' AND pp_page = page_id AND REPLACE(page_title, \'_\', \' \') = pp_value';
-		$t1 .= ' ORDER BY page_title;';
+		$t1 .= ' ORDER BY page_namespace, page_title;';
 		
 		$q1 = $db->query($t1);
 		if ($q1->num_rows === 0) {
