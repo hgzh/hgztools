@@ -546,12 +546,13 @@
 		 * adds a new allowed parameter
 		 *
 		 */
-		public function addAllowed($type, $name, $default = '', $pattern = '', $lcase = true) {
+		public function addAllowed($type, $name, $default = '', $pattern = '', $required = false, $lcase = true) {
 			if ($type == 'GET' || $type == 'POST' ) {
-				$this->allowed[$name]['type']    = $type;
-				$this->allowed[$name]['default'] = $default;
-				$this->allowed[$name]['pattern'] = $pattern;
-				$this->allowed[$name]['lcase']   = $lcase;
+				$this->allowed[$name]['type']     = $type;
+				$this->allowed[$name]['default']  = $default;
+				$this->allowed[$name]['pattern']  = $pattern;
+				$this->allowed[$name]['required'] = $required;
+				$this->allowed[$name]['lcase']    = $lcase;
 				return true;
 			} else {
 				return false;
@@ -564,23 +565,45 @@
 		 */		
 		public function getParams() {
 			$ret = array();
+			$val = '';
 			
 			foreach ($_GET as $k1 => $v1) {
 				foreach ($this->allowed as $k2 => $v2) {
 					if ($k1 == $k2 && $v2['type'] == 'GET') {
-						$ret[$k1] = $this->validateSingleParam($k1, $v1);
+						$val = $this->validateSingleParam($k1, $v1);
+						$ret[$k1] = $val;
+						$this->allowed[$k2]['value'] = $val;
 					}
 				}
 			}
 			foreach ($_POST as $k1 => $v1) {
 				foreach ($this->allowed as $k2 => $v2) {
 					if ($k1 == $k2 && $v2['type'] == 'POST') {
-						$ret[$k1] = $this->validateSingleParam($k1, $v1);
+						$val = $this->validateSingleParam($k1, $v1);
+						$ret[$k1] = $val;
+						$this->allowed[$k2]['value'] = $val;
 					}
 				}
 			}
 			
 			return $ret;
+		}
+		
+		/**
+		 * checks if all required params are defined
+		 *
+		 */		
+
+		public function allRequiredDefined() {
+			$all = true;
+			
+			foreach ($this->allowed as $k1 => $v1) {
+				if ($v1['required'] == true && $v1['value'] == '') {
+					$all = false;
+				}
+			}
+			
+			return $all;
 		}
 		
 	}
