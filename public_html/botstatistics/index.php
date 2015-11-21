@@ -28,11 +28,15 @@
 	// create new database object
 	$db = new Database();
 	
-	// get parameters from url
-	$par_lang    = $page->getParam('lang',    '',     '/^[a-z]{1,7}$/');
-	$par_project = $page->getParam('project', '',     '/^[a-z]{1,15}$/');
-	$par_sort    = $page->getParam('sort',    'ec',   '/^(name|reg|ec)$/');
-	$par_dir     = $page->getParam('dir',     'desc', '/^(asc|desc)$/');
+	// create new request validator
+	$rq = new RequestValidator();
+	
+	// get parameters
+	$rq->addAllowed('GET', 'lang',    '',     '/^[a-z]{1,7}$/',  true);
+	$rq->addAllowed('GET', 'project', '',     '/^[a-z]{1,15}$/', true);
+	$rq->addAllowed('GET', 'sort',    'ec',   '/^(name|reg|ec)$/');
+	$rq->addAllowed('GET', 'dir',     'desc', '/^(asc|desc)$/');
+	$par = $rq->getParams();
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool generates a list of bots in a given project with their total editcount and registration date.');
@@ -44,13 +48,13 @@
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('lang', 'Language');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('lang', $par_lang, 'Language code of the project, e.g. de', 7, true);
+	$optionForm->addInput('lang', $par['lang'], 'Language code of the project, e.g. de', 7, true);
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('project', 'Project');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('project', $par_project, 'Project code, e.g wikipedia', 20, true);
+	$optionForm->addInput('project', $par['project'], 'Project code, e.g wikipedia', 20, true);
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td colspan="2">');
@@ -62,23 +66,23 @@
 	
 	$page->closeBlock();
 	
-	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '') {
+	if ($rq->allRequiredDefined() == true) {
 		$page->openBlock('div', 'iw-content');		
 		$page->addInline('h2', 'Results');
 		
-		$db->replicaConnect(Database::getName($par_lang, $par_project));
+		$db->replicaConnect(Database::getName($par['lang'], $par['project']));
 		$t1  = 'SELECT DISTINCT user_id, user_name, user_registration, user_editcount FROM user, user_groups';
 		$t1 .= ' WHERE ug_group = \'bot\' AND ug_user = user_id';
 		$t1 .= ' ORDER BY ';
-		switch ($par_sort) {
+		switch ($par['sort']) {
 			case 'name': $t1 .= 'user_name '; break;
 			case 'reg':  $t1 .= 'user_registration '; break;
 			case 'ec':   $t1 .= 'user_editcount '; break;
 		}
-		$t1 .= strtoupper($par_dir) . ';';
+		$t1 .= strtoupper($par['dir']) . ';';
 		$q1 = $db->query($t1);
 		
-		if ($par_dir == 'asc') {
+		if ($par['dir'] == 'asc') {
 			$sortNow = 'desc';
 		} else {
 			$sortNow = 'asc';
@@ -87,9 +91,9 @@
 		$page->openBlock('table', 'iw-table iw-full');
 		$page->openBlock('tr');
 		$page->addInline('th', '#');
-		$page->addInline('th', '<a href="index.php?lang=' . $par_lang . '&project=' . $par_project . '&sort=name&dir=' . $sortNow . '">Name</a>');
-		$page->addInline('th', '<a href="index.php?lang=' . $par_lang . '&project=' . $par_project . '&sort=reg&dir=' . $sortNow . '">Registration</a>');
-		$page->addInline('th', '<a href="index.php?lang=' . $par_lang . '&project=' . $par_project . '&sort=ec&dir=' . $sortNow . '">Editcount</a>');
+		$page->addInline('th', '<a href="index.php?lang=' . $par['lang'] . '&project=' . $par['project'] . '&sort=name&dir=' . $sortNow . '">Name</a>');
+		$page->addInline('th', '<a href="index.php?lang=' . $par['lang'] . '&project=' . $par['project'] . '&sort=reg&dir=' . $sortNow . '">Registration</a>');
+		$page->addInline('th', '<a href="index.php?lang=' . $par['lang'] . '&project=' . $par['project'] . '&sort=ec&dir=' . $sortNow . '">Editcount</a>');
 		$page->addInline('th', 'Edits/day');
 		$page->closeBlock();
 		$datenow = new DateTime('now');
@@ -108,17 +112,17 @@
 			
 			$page->openBlock('tr');
 			$page->addInline('td', $counter++);
-			$page->addInline('td', Hgz::buildWikilink($par_lang, $par_project, 'User:' . $l1['user_name'], str_replace('_', ' ', $l1['user_name'])) .
-				           ' ( ' . Hgz::buildWikilink($par_lang, $par_project, 'Special:Contributions/' . $l1['user_name'], 'c') . ' | ' .
-				                   Hgz::buildWikilink($par_lang, $par_project, 'Special:Log/' . $l1['user_name'], 'l') . ' )');
+			$page->addInline('td', Hgz::buildWikilink($par['lang'], $par['project'], 'User:' . $l1['user_name'], str_replace('_', ' ', $l1['user_name'])) .
+				           ' ( ' . Hgz::buildWikilink($par['lang'], $par['project'], 'Special:Contributions/' . $l1['user_name'], 'c') . ' | ' .
+				                   Hgz::buildWikilink($par['lang'], $par['project'], 'Special:Log/' . $l1['user_name'], 'l') . ' )');
 			if ($datefound == true) { 
 				$page->addInline('td', $datereg->format('j M Y'));
 			} else { 
 				$page->addInline('td', '');
 			}
-			$page->addInline('td', number_format( $l1['user_editcount'], 0, '', ' ' ));
+			$page->addInline('td', number_format($l1['user_editcount'], 0, '', ' '));
 			if ($datefound == true) { 
-				$page->addInline('td', number_format( $epd, 2, ',', ' ' ));
+				$page->addInline('td', number_format($epd, 2, ',', ' ' ));
 			} else {
 				$page->addInline('td', '');
 			}
