@@ -497,11 +497,98 @@
 	}
 	
 	/**
+	 * ##### CLASS RequestValidator CLASS #####
+	 * Klasse für Anfragenvalidierung
+	 *
+	 */
+	class RequestValidator {
+		
+		/**
+		 * [array]
+		 * allowed params
+		 */
+		private $allowed = array();
+		
+		/**
+		 * validates one single parameter
+		 *
+		 */
+		private function validateSingleParam($name, $value) {
+			$ret = '';
+			
+			if (!isset($this->allowed[$name])) {
+				return false;
+			}
+			
+			if ($value == '' && isset($this->allowed[$name]['default']) && $this->allowed[$name]['default'] != '') {
+				$ret = $this->allowed[$name]['default'];
+			} else {
+				$ret = $value;
+			}
+			
+			if ($this->allowed[$name]['lcase'] == true) {
+				$ret = strtolower($ret);
+			}
+			
+			$ret = htmlspecialchars($ret);
+			
+			if (isset($this->allowed[$name]['pattern']) && $this->allowed[$name]['pattern'] != '' && $ret != '') {
+				if (!preg_match($this->allowed[$name]['pattern'], $ret)) {
+					$this->setMessage('Validation failed for parameter ' . $param, true);
+					return false;
+				}
+			}
+			
+			return $ret;
+		}
+		
+		/**
+		 * adds a new allowed parameter
+		 *
+		 */
+		public function addAllowed($type, $name, $default = '', $pattern = '', $lcase = true) {
+			if ($type == 'GET' || $type == 'POST' ) {
+				$this->allowed[$name]['type']    = $type;
+				$this->allowed[$name]['default'] = $default;
+				$this->allowed[$name]['pattern'] = $pattern;
+				$this->allowed[$name]['lcase']   = $lcase;
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		/**
+		 * validates request parameters and returns the valid ones
+		 *
+		 */		
+		public function getParams() {
+			$ret = array();
+			
+			foreach ($_GET as $k1 => $v1) {
+				foreach ($this->allowed as $k2 => $v2) {
+					if ($k1 == $k2 && $v2['type'] == 'GET') {
+						$ret[$k1] = $this->validateSingleParam($k1, $v1);
+					}
+				}
+			}
+			foreach ($_POST as $k1 => $v1) {
+				foreach ($this->allowed as $k2 => $v2) {
+					if ($k1 == $k2 && $v2['type'] == 'POST') {
+						$ret[$k1] = $this->validateSingleParam($k1, $v1);
+					}
+				}
+			}
+			
+			return $ret;
+		}
+		
+	}
+	
+	/**
 	 * ##### CLASS Hgz CLASS #####
 	 * Klasse für Hilfsfunktionen
 	 *
-	 * @erweitert
-	 * - mysqli
 	 */
 	class Hgz {
 		
@@ -524,4 +611,5 @@
 		}
 		
 	}
+	
 ?>

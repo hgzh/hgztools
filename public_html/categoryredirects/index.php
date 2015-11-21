@@ -28,10 +28,14 @@
 	// create new database object
 	$db = new Database();
 	
-	// get parameters from url
-	$par_lang    = $page->getParam('lang',    '',     '/^[a-z]{1,7}$/');
-	$par_project = $page->getParam('project', '',     '/^[a-z]{1,15}$/');
-	$par_sort    = $page->getParam('sort',    'name', '/^(name|entries|length)$/');
+	// create new request validator
+	$rq = new RequestValidator();
+	
+	// get parameters
+	$rq->addAllowed('GET', 'lang',    '',     '/^[a-z]{1,7}$/');
+	$rq->addAllowed('GET', 'project', '',     '/^[a-z]{1,15}$/');
+	$rq->addAllowed('GET', 'sort',    'name', '/^(name|entries|length)$/');
+	$par = $rq->getParams();
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool shows a list of categories that redirect to another category in the given project and the number of entries in it.');
@@ -43,13 +47,13 @@
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('lang', 'Language');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('lang', $par_lang, 'Language code of the project, e.g. de', 7, true);
+	$optionForm->addInput('lang', $par['lang'], 'Language code of the project, e.g. de', 7, true);
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('project', 'Project');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('project', $par_project, 'Project code, e.g wikipedia', 20, true);
+	$optionForm->addInput('project', $par['project'], 'Project code, e.g wikipedia', 20, true);
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td colspan="2">');
@@ -61,19 +65,19 @@
 	
 	$page->closeBlock();
 	
-	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '') {
+	if (isset($par['lang']) && $par['lang'] != '' && isset($par['project']) && $par['project'] != '') {
 		$page->openBlock('div', 'iw-content');		
 		$page->addInline('h2', 'Results');
 		
-		$db->replicaConnect(Database::getName($par_lang, $par_project));
+		$db->replicaConnect(Database::getName($par['lang'], $par['project']));
 		$t1  = 'SELECT page.page_title, page.page_len, count(categorylinks.cl_from) AS cl ';
 		$t1 .= 'FROM page LEFT JOIN categorylinks ON page.page_title = categorylinks.cl_to ';
 		$t1 .= 'WHERE page.page_namespace = 14 AND page.page_is_redirect = 1 GROUP BY page.page_title ';
-		if ($par_sort == 'name') {
+		if ($par['sort'] == 'name') {
 			$t1 .= 'ORDER BY page.page_title;';
-		} elseif ($par_sort == 'length') {
+		} elseif ($par['sort'] == 'length') {
 			$t1 .= 'ORDER BY page.page_len DESC;';
-		} elseif ($par_sort == 'entries') {
+		} elseif ($par['sort'] == 'entries') {
 			$t1 .= 'ORDER BY cl DESC;';
 		}
 		$q1 = $db->query($t1);
@@ -83,13 +87,13 @@
 		} else {
 			$page->openBlock('table', 'iw-table');
 			$page->openBlock('tr');
-			$page->addInline('th', '<a href="index.php?lang=' . $par_lang . '&project=' . $par_project . '&sort=name">Name</a>');
-			$page->addInline('th', '<a href="index.php?lang=' . $par_lang . '&project=' . $par_project . '&sort=entries">Entries</a>');
-			$page->addInline('th', '<a href="index.php?lang=' . $par_lang . '&project=' . $par_project . '&sort=length">Bytes</a>');
+			$page->addInline('th', '<a href="index.php?lang=' . $par['lang'] . '&project=' . $par['project'] . '&sort=name">Name</a>');
+			$page->addInline('th', '<a href="index.php?lang=' . $par['lang'] . '&project=' . $par['project'] . '&sort=entries">Entries</a>');
+			$page->addInline('th', '<a href="index.php?lang=' . $par['lang'] . '&project=' . $par['project'] . '&sort=length">Bytes</a>');
 			$page->closeBlock();
 			while ($l1 = $q1->fetch_assoc()) {
 				$page->openBlock('tr');
-				$page->addInline('td', Hgz::buildWikilink($par_lang, $par_project, 'Category:' . $l1['page_title'], str_replace('_', ' ', $l1['page_title']), 'redirect=no'));
+				$page->addInline('td', Hgz::buildWikilink($par['lang'], $par['project'], 'Category:' . $l1['page_title'], str_replace('_', ' ', $l1['page_title']), 'redirect=no'));
 				$page->addInline('td', $l1['cl']);
 				$page->addInline('td', $l1['page_len']);
 				$page->closeBlock();
