@@ -568,7 +568,7 @@
 			$ret = array();
 			$val = '';
 			
-			foreach ($this->allowed as $k1 => $v1) {
+			foreach ($this->allowed as $k1 => &$v1) {
 				foreach ($_GET as $k2 => $v2) {
 					if ($k1 == $k2 && $v1['type'] == 'GET') {
 						$val = $this->validateSingleParam($k1, $v2);
@@ -591,6 +591,7 @@
 				$ret[$k1] = $val;
 				$v1['value'] = $val;
 			}
+			unset($v1);
 			
 			return $ret;
 		}

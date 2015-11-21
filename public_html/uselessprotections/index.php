@@ -34,6 +34,7 @@
 	// get parameters from url
 	$rq->addAllowed('GET', 'lang',    '', '/^[a-z]{1,7}$/',  true);
 	$rq->addAllowed('GET', 'project', '', '/^[a-z]{1,15}$/', true);
+	$par = $rq->getParams();
 	
 	$page->openBlock('div', 'iw-content');
 	$page->openBlock('p');
