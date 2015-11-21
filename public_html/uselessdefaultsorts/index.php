@@ -28,9 +28,13 @@
 	// create new database object
 	$db = new Database();
 	
-	// get parameters from url
-	$par_lang    = $page->getParam('lang',    '', '/^[a-z]{1,7}$/');
-	$par_project = $page->getParam('project', '', '/^[a-z]{1,15}$/');
+	// create new request validator
+	$rq = new RequestValidator();
+	
+	// get parameters
+	$rq->addAllowed('GET', 'lang',    '', '/^[a-z]{1,7}$/',  true);
+	$rq->addAllowed('GET', 'project', '', '/^[a-z]{1,15}$/', true);
+	$par = $rq->getParams();
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool generates a list of DEFAULTSORT keys that match the page title exactly.');
@@ -43,13 +47,13 @@
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('lang', 'Language');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('lang', $par_lang, 'Language code of the project, e.g. de', 7, true);
+	$optionForm->addInput('lang', $par['lang'], 'Language code of the project, e.g. de', 7, true);
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('project', 'Project');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('project', $par_project, 'Project code, e.g wikipedia', 20, true);
+	$optionForm->addInput('project', $par['project'], 'Project code, e.g wikipedia', 20, true);
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td colspan="2">');
@@ -61,11 +65,11 @@
 	
 	$page->closeBlock();
 	
-	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '') {
+	if ($rq->allRequiredDefined() == true) {
 		$page->openBlock('div', 'iw-content');
 		$page->addInline('h2', 'Results');
 		
-		$db->replicaConnect(Database::getName($par_lang, $par_project));
+		$db->replicaConnect(Database::getName($par['lang'], $par['project']));
 		$t1  = 'SELECT page_title, page_namespace, pp_value FROM page, page_props';
 		$t1 .= ' WHERE pp_propname = \'defaultsort\' AND pp_page = page_id AND REPLACE(page_title, \'_\', \' \') = pp_value';
 		$t1 .= ' ORDER BY page_namespace, page_title;';
@@ -78,7 +82,7 @@
 			$page->addInline('tr', '<th>Page</th><th>Defaultsort</th>');
 			while ($l1 = $q1->fetch_assoc()) {
 				$page->openBlock('tr');
-				$page->addInline('td', Hgz::buildWikilink($par_lang, $par_project, Database::getNsNameFromNr($l1['page_namespace']) . $l1['page_title'], 
+				$page->addInline('td', Hgz::buildWikilink($par['lang'], $par['project'], Database::getNsNameFromNr($l1['page_namespace']) . $l1['page_title'], 
 				                    Database::getNsNameFromNr($l1['page_namespace'], false) . str_replace('_', ' ', $l1['page_title'])));
 				$page->addInline('td', $l1['pp_value']);
 				$page->closeBlock();

@@ -27,13 +27,17 @@
 
 	// create new database object
 	$db = new Database();
+
+	// create new request validator
+	$rq = new RequestValidator();
 	
-	// get parameters from url
-	$par_lang    = $page->getParam('lang',    '',           '/^[a-z]{1,7}$/');
-	$par_project = $page->getParam('project', '',           '/^[a-z]{1,15}$/');
-	$par_page    = $page->getParam('page',    '',           '', false);
-	$par_since   = $page->getParam('since',   '0000-00-00', '/^\d{4}-\d{2}-\d{2}$/', false);
-	$par_until   = $page->getParam('until',   '0000-00-00', '/^\d{4}-\d{2}-\d{2}$/', false);
+	// get parameters
+	$rq->addAllowed('GET', 'lang',    '',           '/^[a-z]{1,7}$/', true);
+	$rq->addAllowed('GET', 'project', '',           '/^[a-z]{1,15}$/', true);
+	$rq->addAllowed('GET', 'page',    '',           '', true, false);
+	$rq->addAllowed('GET', 'since',   '0000-00-00', '/^\d{4}-\d{2}-\d{2}$/', false, false);
+	$rq->addAllowed('GET', 'until',   '0000-00-00', '/^\d{4}-\d{2}-\d{2}$/', false, false);
+	$par = $rq->getParams();
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool creates a list of contributors to a given article on a given project in wikitext.');
@@ -45,31 +49,31 @@
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('lang', 'Language');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('lang', $par_lang, 'Language code of the project, e.g. de', 7, true);
+	$optionForm->addInput('lang', $par['lang'], 'Language code of the project, e.g. de', 7, true);
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('project', 'Project');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('project', $par_project, 'Project code, e.g wikipedia', 20, true);
+	$optionForm->addInput('project', $par['project'], 'Project code, e.g wikipedia', 20, true);
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('page', 'Page title');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('page', $par_page, 'A page title in the main namespace (0)', 0, true);
+	$optionForm->addInput('page', $par['page'], 'A page title in the main namespace (0)', 0, true);
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('since', 'Revisions since');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('since', $par_since, '(Format: YYYY-MM-DD)');
+	$optionForm->addInput('since', $par['since'], '(Format: YYYY-MM-DD)');
 	$optionForm->addHTML('</td></tr>');
 
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('until', 'Revisions until');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('until', $par_until, '(Format: YYYY-MM-DD)');
+	$optionForm->addInput('until', $par['until'], '(Format: YYYY-MM-DD)');
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td colspan="2">');
@@ -81,14 +85,14 @@
 	
 	$page->closeBlock();
 	
-	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '' && isset($par_page) && $par_page != '') {
+	if ($rq->allRequiredDefined() == true) {
 		$page->openBlock('div', 'iw-content');
 		$page->addInline('h2', 'Results');
 		
-		$db->replicaConnect(Database::getName($par_lang, $par_project));
-		$par_page = str_replace(' ', '_', $par_page);
-		$par_page = $db->real_escape_string($par_page);
-		$t1  = 'SELECT revision_userindex.rev_timestamp, revision_userindex.rev_user_text, revision_userindex.rev_comment, revision_userindex.rev_id FROM revision_userindex, page WHERE page.page_title = \'' . $par_page . '\' ';
+		$db->replicaConnect(Database::getName($par['lang'], $par['project']));
+		$par['page'] = str_replace(' ', '_', $par['page']);
+		$par['page'] = $db->real_escape_string($par['page']);
+		$t1  = 'SELECT revision_userindex.rev_timestamp, revision_userindex.rev_user_text, revision_userindex.rev_comment, revision_userindex.rev_id FROM revision_userindex, page WHERE page.page_title = \'' . $par['page'] . '\' ';
 		$t1 .= 'AND page.page_namespace = 0 AND revision_userindex.rev_page = page.page_id ';
 		$t1 .= 'ORDER BY revision_userindex.rev_timestamp DESC;';
 		
@@ -98,20 +102,20 @@
 			$page->addInline('p', 'there were no results for this query', 'iw-info');
 		} else {
 			$page->addInline('p', 'found ' . $q1->num_rows . ' revisions for article ' . 
-				Hgz::buildWikilink($par_lang, $par_project, $par_page, str_replace('_', ' ', $par_page)) . '(<a href="https://' . $par_lang . '.' . $par_project . '.org/w/index.php?title=' . $par_page . '&action=history">History</a>).');
+				Hgz::buildWikilink($par['lang'], $par['project'], $par['page'], str_replace('_', ' ', $par['page'])) . '(<a href="https://' . $par['lang'] . '.' . $par['project'] . '.org/w/index.php?title=' . $par['page'] . '&action=history">History</a>).');
 			$page->openBlock('div', 'iw-code');
 			while ($l1 = $q1->fetch_assoc()) {
 				$datetime = DateTime::createFromFormat('YmdHis', $l1['rev_timestamp']);
 				$dateform = $datetime->format('Y-m-d H:i');
 				$dateraw  = $datetime->format('Ymd');
-				if (isset($par_since) && $par_since != '0000-00-00') {
-					$timestamp = str_replace('-', '', $par_since);
+				if (isset($par['since']) && $par['since'] != '0000-00-00') {
+					$timestamp = str_replace('-', '', $par['since']);
 					if ($dateraw < $timestamp) { 
 						continue; 
 					}
 				}
-				if (isset($par_until) && $par_until != '0000-00-00')  {
-					$timestamp = str_replace('-', '', $par_until);
+				if (isset($par['until']) && $par['until'] != '0000-00-00')  {
+					$timestamp = str_replace('-', '', $par['until']);
 					if ($dateraw > $timestamp) {
 						continue;
 					}

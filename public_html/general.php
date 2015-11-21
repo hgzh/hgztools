@@ -223,32 +223,6 @@
 			echo $this->foot;
 		}
 		
-		/**
-		 * gets a param from http
-		 *
-		 */
-		public function getParam($param, $default = '', $validation = '', $lcase = true) {
-			if (isset($_GET[$param])) {
-				$ret = $_GET[$param];
-			} else {
-				$ret = '';
-			}
-			if ($ret == '' && isset($default) && $default != '') {
-				$ret = $default;
-			}
-			if ($lcase == true) {
-				$ret = strtolower($ret);
-			}
-			$ret = htmlspecialchars($ret);
-			if (isset($validation) && $validation != '' && $ret != '') {
-				if (!preg_match($validation, $ret)) {
-					$this->setMessage('Validation failed for parameter ' . $param, true);
-					return false;
-				}
-			}
-			return $ret;
-		}
-		
 	}
 	
 	/**

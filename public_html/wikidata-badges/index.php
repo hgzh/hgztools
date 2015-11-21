@@ -28,8 +28,12 @@
 	// create new database object
 	$db = new Database();
 	
-	// get parameters from url
-	$par_mode = $page->getParam('mode', '', '/^(lesenswert|exzellent|informativ|portal)$/');
+	// create new request validator
+	$rq = new RequestValidator();
+	
+	// get parameters
+	$rq->addAllowed('GET', 'mode', '', '/^(lesenswert|exzellent|informativ|portal)$/', true);
+	$par = $rq->getParams();
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'Mit diesem Werkzeug lassen sich Unterschiede zwischen den lokalen Auszeichnungsvorlagen und den Daten auf Wikidata feststellen.');
@@ -59,13 +63,13 @@
 	
 	$page->closeBlock();
 	
-	if (isset($par_mode) && $par_mode != '') {
+	if ($rq->allRequiredDefined() == true) {
 		$page->openBlock('div', 'iw-content');
 		$page->addInline('h2', 'Ergebnisse');
 		
 		$db->replicaConnect(Database::getName('de', 'wikipedia'));
 		$t1  = 'SELECT page_title FROM page, page_props';
-		switch ($par_mode) {
+		switch ($par['mode']) {
 			case 'lesenswert' : $t1 .= ' WHERE pp_propname = \'wikibase-badge-Q17437798\' AND pp_page = page_id AND page_namespace = 0'; break;
 			case 'exzellent'  : $t1 .= ' WHERE pp_propname = \'wikibase-badge-Q17437796\' AND pp_page = page_id AND page_namespace = 0'; break;
 			case 'informativ' : $t1 .= ' WHERE pp_propname = \'wikibase-badge-Q17506997\' AND pp_page = page_id AND page_namespace = 0'; break;
@@ -74,7 +78,7 @@
 		$t1 .= ' ORDER BY page_title;';
 
 		$t2  = 'SELECT page_title FROM page, categorylinks';
-		switch ($par_mode) {
+		switch ($par['mode']) {
 			case 'lesenswert' : $t2 .= ' WHERE cl_to = \'Wikipedia:Lesenswert\' AND cl_from = page_id AND page_namespace = 0'; break;
 			case 'exzellent'  : $t2 .= ' WHERE cl_to = \'Wikipedia:Exzellent\' AND cl_from = page_id AND page_namespace = 0'; break;
 			case 'informativ' : $t2 .= ' WHERE cl_to = \'Wikipedia:Informative_Liste\' AND cl_from = page_id AND page_namespace = 0'; break;
@@ -101,10 +105,10 @@
 		$diff_nowp = array_diff($r1, $r2);
 		
 		if (count($diff_nowd) != 0) {
-			$page->addInline('h3', 'Lokal als ' . $par_mode . ' ausgezeichnet, aber nicht auf Wikidata');
+			$page->addInline('h3', 'Lokal als ' . $par['mode'] . ' ausgezeichnet, aber nicht auf Wikidata');
 			$page->openBlock('ul');
 			foreach ($diff_nowd as $v1) {
-				if ($par_mode == 'portal') {
+				if ($par['mode'] == 'portal') {
 					$page->addInline('li', Hgz::buildWikilink('de', 'wikipedia', 'Portal:' . $v1, 'Portal:' . str_replace('_', ' ', $v1)));
 				} else {
 					$page->addInline('li', Hgz::buildWikilink('de', 'wikipedia', $v1, str_replace('_', ' ', $v1)));
@@ -113,10 +117,10 @@
 			$page->closeBlock();
 		}
 		if (count($diff_nowp) != 0) {
-			$page->addInline('h3', 'Auf Wikidata als ' . $par_mode . '  ausgezeichnet, aber nicht lokal');
+			$page->addInline('h3', 'Auf Wikidata als ' . $par['mode'] . '  ausgezeichnet, aber nicht lokal');
 			$page->openBlock('ul');
 			foreach ($diff_nowp as $v1) {
-				if ($par_mode == 'portal') {
+				if ($par['mode'] == 'portal') {
 					$page->addInline('li', Hgz::buildWikilink('de', 'wikipedia', 'Portal:' . $v1, 'Portal:' . str_replace('_', ' ', $v1)));
 				} else {
 					$page->addInline('li', Hgz::buildWikilink('de', 'wikipedia', $v1, str_replace('_', ' ', $v1)));

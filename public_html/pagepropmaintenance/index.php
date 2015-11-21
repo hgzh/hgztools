@@ -28,10 +28,14 @@
 	// create new database object
 	$db = new Database();
 	
-	// get parameters from url
-	$par_lang    = $page->getParam('lang',    '', '/^[a-z]{1,7}$/');
-	$par_project = $page->getParam('project', '', '/^[a-z]{1,15}$/');
-	$par_mode    = $page->getParam('mode',    '', '/^(ns0\-noindex|ns0\-index|ns0\-noeditsection|ns0\-newsectionlink|staticredirect)$/');
+	// create new request validator
+	$rq = new RequestValidator();
+	
+	// get parameters
+	$rq->addAllowed('GET', 'lang',    '', '/^[a-z]{1,7}$/',  true);
+	$rq->addAllowed('GET', 'project', '', '/^[a-z]{1,15}$/', true);
+	$rq->addAllowed('GET', 'mode',    '', '/^(ns0\-noindex|ns0\-index|ns0\-noeditsection|ns0\-newsectionlink|staticredirect)$/', true);
+	$par = $rq->getParams();
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('p', 'This tool allows to get information about some probably misused magic words in a specific project.');
@@ -44,13 +48,13 @@
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('lang', 'Language');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('lang', $par_lang, 'Language code of the project, e.g. de', 7, true);
+	$optionForm->addInput('lang', $par['lang'], 'Language code of the project, e.g. de', 7, true);
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('project', 'Project');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('project', $par_project, 'Project code, e.g wikipedia', 20, true);
+	$optionForm->addInput('project', $par['project'], 'Project code, e.g wikipedia', 20, true);
 	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td>');
@@ -74,13 +78,13 @@
 	
 	$page->closeBlock();
 	
-	if (isset($par_lang) && $par_lang != '' && isset($par_project) && $par_project != '' && isset($par_mode) && $par_project != '') {
+	if ($rq->allRequiredDefined() == true) {
 		$page->openBlock('div', 'iw-content');
 		$page->addInline('h2', 'Results');
 		
-		$db->replicaConnect(Database::getName($par_lang, $par_project));
+		$db->replicaConnect(Database::getName($par['lang'], $par['project']));
 		$t1  = 'SELECT page_title, page_namespace, pp_value FROM page, page_props';
-		switch ($par_mode) {
+		switch ($par['mode']) {
 			case 'ns0-noindex'        : $t1 .= ' WHERE pp_propname = \'noindex\' AND pp_page = page_id AND page_namespace = 0'; break;
 			case 'ns0-index'          : $t1 .= ' WHERE pp_propname = \'index\' AND pp_page = page_id AND page_namespace = 0'; break;
 			case 'ns0-noeditsection'  : $t1 .= ' WHERE pp_propname = \'noeditsection\' AND pp_page = page_id AND page_namespace = 0'; break;
@@ -97,7 +101,7 @@
 			$page->addInline('tr', '<th>Page</th><th>Page prop value</th>');
 			while ($l1 = $q1->fetch_assoc()) {
 				$page->openBlock('tr');
-				$page->addInline('td', Hgz::buildWikilink($par_lang, $par_project, Database::getNsNameFromNr($l1['page_namespace']) . $l1['page_title'], 
+				$page->addInline('td', Hgz::buildWikilink($par['lang'], $par['project'], Database::getNsNameFromNr($l1['page_namespace']) . $l1['page_title'], 
 				                    Database::getNsNameFromNr($l1['page_namespace'], false) . str_replace('_', ' ', $l1['page_title'])));
 				$page->addInline('td', $l1['pp_value']);
 				$page->closeBlock();

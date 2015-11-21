@@ -31,7 +31,7 @@
 	// create new request validator
 	$rq = new RequestValidator();
 	
-	// get parameters from url
+	// get parameters
 	$rq->addAllowed('GET', 'lang',    '', '/^[a-z]{1,7}$/',  true);
 	$rq->addAllowed('GET', 'project', '', '/^[a-z]{1,15}$/', true);
 	$par = $rq->getParams();
