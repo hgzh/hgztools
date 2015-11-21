@@ -553,6 +553,7 @@
 				$this->allowed[$name]['pattern']  = $pattern;
 				$this->allowed[$name]['required'] = $required;
 				$this->allowed[$name]['lcase']    = $lcase;
+				$this->allowed[$name]['touched']  = false;
 				return true;
 			} else {
 				return false;
@@ -567,23 +568,28 @@
 			$ret = array();
 			$val = '';
 			
-			foreach ($_GET as $k1 => $v1) {
-				foreach ($this->allowed as $k2 => $v2) {
-					if ($k1 == $k2 && $v2['type'] == 'GET') {
-						$val = $this->validateSingleParam($k1, $v1);
-						$ret[$k1] = $val;
-						$this->allowed[$k2]['value'] = $val;
+			foreach ($this->allowed as $k1 => $v1) {
+				foreach ($_GET as $k2 => $v2) {
+					if ($k1 == $k2 && $v1['type'] == 'GET') {
+						$val = $this->validateSingleParam($k1, $v2);
+						$v1['touched'] = true;
 					}
 				}
-			}
-			foreach ($_POST as $k1 => $v1) {
-				foreach ($this->allowed as $k2 => $v2) {
-					if ($k1 == $k2 && $v2['type'] == 'POST') {
-						$val = $this->validateSingleParam($k1, $v1);
-						$ret[$k1] = $val;
-						$this->allowed[$k2]['value'] = $val;
+				
+				foreach ($_POST as $k2 => $v2) {
+					if ($k1 == $k2 && $v1['type'] == 'POST') {
+						$val = $this->validateSingleParam($k1, $v2);
+						$v1['touched'] = true;
 					}
 				}
+				
+				if ($v1['touched'] == false) {
+					$val = $this->validateSingleParam($k1, '');
+					$v1['touched'] = true;
+				}
+				
+				$ret[$k1] = $val;
+				$v1['value'] = $val;
 			}
 			
 			return $ret;
