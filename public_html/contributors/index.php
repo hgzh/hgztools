@@ -45,18 +45,14 @@
 	
 	$optionForm = new HtmlForm('index.php', 'GET');
 	$optionForm->addHTML('<table class="iw-nostyle">');
-
-	$optionForm->addHTML('<tr><td>');
-	$optionForm->addLabel('lang', 'Language');
-	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('lang', $par['lang'], 'Language code of the project, e.g. de', 7, true);
-	$optionForm->addHTML('</td></tr>');
 	
 	$optionForm->addHTML('<tr><td>');
-	$optionForm->addLabel('project', 'Project');
+	$optionForm->addLabel('lang', 'Project');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('project', $par['project'], 'Project code, e.g wikipedia', 20, true);
-	$optionForm->addHTML('</td></tr>');
+	$optionForm->addInput('lang', $par['lang'], '', 7, true);
+	$optionForm->addHTML('&nbsp;.&nbsp;');
+	$optionForm->addInput('project', $par['project'], '', 20, true);
+	$optionForm->addHTML('&nbsp;.org</td></tr>');
 	
 	$optionForm->addHTML('<tr><td>');
 	$optionForm->addLabel('page', 'Page title');
@@ -102,7 +98,7 @@
 			$page->addInline('p', 'there were no results for this query', 'iw-info');
 		} else {
 			$page->addInline('p', 'found ' . $q1->num_rows . ' revisions for article ' . 
-				Hgz::buildWikilink($par['lang'], $par['project'], $par['page'], str_replace('_', ' ', $par['page'])) . '(<a href="https://' . $par['lang'] . '.' . $par['project'] . '.org/w/index.php?title=' . $par['page'] . '&action=history">History</a>).');
+				Hgz::buildWikilink($par['lang'], $par['project'], $par['page'], str_replace('_', ' ', $par['page'])) . ' (<a href="https://' . $par['lang'] . '.' . $par['project'] . '.org/w/index.php?title=' . $par['page'] . '&action=history">History</a>).');
 			$page->openBlock('div', 'iw-code');
 			while ($l1 = $q1->fetch_assoc()) {
 				$datetime = DateTime::createFromFormat('YmdHis', $l1['rev_timestamp']);
