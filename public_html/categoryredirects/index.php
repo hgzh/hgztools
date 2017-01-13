@@ -45,16 +45,12 @@
 	$optionForm->addHTML('<table class="iw-nostyle">');
 	
 	$optionForm->addHTML('<tr><td>');
-	$optionForm->addLabel('lang', 'Language');
+	$optionForm->addLabel('lang', 'Project');
 	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('lang', $par['lang'], 'Language code of the project, e.g. de', 7, true);
-	$optionForm->addHTML('</td></tr>');
-	
-	$optionForm->addHTML('<tr><td>');
-	$optionForm->addLabel('project', 'Project');
-	$optionForm->addHTML('</td><td>');
-	$optionForm->addInput('project', $par['project'], 'Project code, e.g wikipedia', 20, true);
-	$optionForm->addHTML('</td></tr>');
+	$optionForm->addInput('lang', $par['lang'], '', 7, true);
+	$optionForm->addHTML('&nbsp;.&nbsp;');
+	$optionForm->addInput('project', $par['project'], '', 20, true);
+	$optionForm->addHTML('&nbsp;.org</td></tr>');
 	
 	$optionForm->addHTML('<tr><td colspan="2">');
 	$optionForm->addButton('submit', 'View categories');
