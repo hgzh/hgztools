@@ -333,6 +333,29 @@
 		}
 		
 		/**
+		 * fügt einen Textbereich (textarea) hinzu.
+		 *
+		 * @parameter
+		 * - name      : Bezeichner
+		 * - value     : Voreingetragener Text
+		 * - info      : zusätzliche Beschriftung
+		 * - maxlength : maximal erlaubte Zeichenanzahl bei Eingabe
+		 * - required  : benötigt, um Formular absenden zu können
+		 * - type      : Typ des Eingabefelds (z.B. text, password)
+		 */
+		public function addTextarea($name, $value, $info = '', $rows = 3, $cols = 20, $required = false) {
+			$this->form .= '<textarea name="' . $name . '" id="' . $name . '" value="' . $value . '"';
+			$this->form .= ' rows="' . $rows . '" cols="' . $cols . '"';
+			if( $required == true ) {
+				$this->form .= ' required="required" ';
+			}
+			$this->form .= '/>';
+			if( $info != '' ) {
+				$this->form .= ' <span class="iw-info">' . $info . '</span>';
+			}
+		}
+		
+		/**
 		 * fügt einen Button hinzu
 		 *
 		 * @parameter
@@ -430,6 +453,46 @@
 				$lang = 'wikidata';
 			}
 			return $lang . $project . $separator . 'p';
+		}
+		
+		/**
+		 * liest alle Ergebnisse einer Datenbankabfrage aus und gibt sie als Array zurück.
+		 *
+		 * @parameter
+		 * - query : Query-Objekt
+		 *
+		 * @rückgabe
+		 * - Ergebnisarray 
+		 */
+		public static function fetchResult($query) {   
+		    $array = [];
+   
+			if ($query instanceof mysqli_stmt) {
+				$query->store_result();
+			   
+				$variables = [];
+				$data = [];
+				$meta = $query->result_metadata();
+			   
+				while ($field = $meta->fetch_field()) {
+					$variables[] = &$data[$field->name];
+				}
+			   
+				call_user_func_array([$query, 'bind_result'], $variables);
+			   
+				$i = 0;
+				while ($query->fetch()) {
+					$array[$i] = [];
+					foreach ($data as $k => $v)
+						$array[$i][$k] = $v;
+					$i++;
+				}
+			} elseif ($query instanceof mysqli_result) {
+				while($row = $query->fetch_assoc()) {
+					$array[] = $row;
+				}
+			}
+			return $array;
 		}
 		
 		/**
@@ -596,6 +659,12 @@
 	 */
 	class Hgz {
 		
+		protected $page;
+		
+		protected $db;
+		
+		protected $rq;
+		
 		/**
 		 * creates a link to a wiki page
 		 *
@@ -612,6 +681,44 @@
 			$ret .= '</a>';
 			
 			return $ret;
+		}
+
+		/**
+		 * returns the shortcut for wmf projects
+		 *
+		 */		
+		public static function getProjectShortcut($project, $lang) {
+			
+			switch (strtolower($project)) {
+				case 'wikipedia'   : $project = 'w'; break;
+				case 'wikidata'    : $project = 'd'; break;
+				case 'wikisource'  : $project = 's'; break;
+				case 'wikivoyage'  : $project = 'voy'; break;
+				case 'wikiversity' : $project = 'v'; break;
+				case 'wikibooks'   : $project = 'b'; break;
+				case 'wiktionary'  : $project = 'wikt'; break;
+				case 'wikiquote'   : $project = 'q'; break;
+				case 'wikinews'    : $project = 'n'; break;
+			}
+			
+			switch (strtolower($lang)) {
+				case 'commons' : 
+					$project = 'c';
+					$lang = '';
+					break;
+				case 'meta' : 
+					$project = 'meta';
+					$lang = '';
+					break;
+			}
+			
+			$ret = $project . ':';
+			if ($lang) {
+				$ret .= $lang . ':';
+			}
+			
+			return $ret;
+			
 		}
 		
 	}
