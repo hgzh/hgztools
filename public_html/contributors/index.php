@@ -118,7 +118,7 @@
 		}
 		
 		private function formatterHtml($pData) {
-			$html = '<ul>';
+			$html = '&lt;ul>';
 			foreach ($pData as $row) {
 				$datetime = DateTime::createFromFormat('YmdHis', $row['rev_timestamp']);
 				$dateraw  = $datetime->format('Ymd');
@@ -127,21 +127,21 @@
 					continue;
 				}
 				
-				$html .= '<li>';
-				$html .= '<a href="https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/Special:PermaLink/';
-				$html .= $row['rev_id'] . '">' . $dateform . ' (UTC)</a>';
+				$html .= '&lt;li>';
+				$html .= '&lt;a href="https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/Special:PermaLink/';
+				$html .= $row['rev_id'] . '">' . $dateform . ' (UTC)&lt;/a>';
 				$html .= ' . . ';
-				$html .= '<a href="https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/User:';
-				$html .= $row['rev_user_text'] . '">' . $row['rev_user_text'] . '</a>';
+				$html .= '&lt;a href="https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/User:';
+				$html .= $row['rev_user_text'] . '">' . $row['rev_user_text'] . '&lt;/a>';
 
 				if (isset($row['rev_comment']) && $row['rev_comment'] != '') {
 					$cmt = $row['rev_comment'];
-					$cmt = preg_replace('/\/\*\s(.+)\s\*\//', '<a href="https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/Special:PermaLink/' . $row['rev_id'] . '#$1">→‎</a>$1:', $cmt);
-					$html .= ' <i>('. $cmt . ')</i> ';
+					$cmt = preg_replace('/\/\*\s(.+)\s\*\//', '&lt;a href="https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/Special:PermaLink/' . $row['rev_id'] . '#$1">→‎&lt;/a>$1:', $cmt);
+					$html .= ' &lt;i>('. $cmt . ')&lt;/i> ';
 				}
-				$html .= "</li>\r\n";
+				$html .= "&lt;/li>\r\n";
 			}
-			$html .= '</ul>';
+			$html .= '&lt;/ul>';
 			$this->page->addHTML($html);
 		}
 		
@@ -229,7 +229,7 @@
 				$this->page->addInline('p', 'found ' . $q1->num_rows . ' revisions for article ' . 
 					parent::buildWikilink($this->par['lang'], $this->par['project'], $this->par['page'], str_replace('_', ' ', $this->par['page'])) . ' (<a href="https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/w/index.php?title=' . $this->par['page'] . '&action=history">History</a>).');
 
-				$this->page->openBlock('pre', 'iw-code');
+				$this->page->openBlock('div', 'iw-code');
 					
 				$result = Database::fetchResult($q1);
 				if ($this->par['format'] == 'wiki_int') {
