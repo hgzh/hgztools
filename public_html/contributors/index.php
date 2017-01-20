@@ -117,7 +117,7 @@
 
 		}
 		
-		private function formatterWikiHtml($pData) {
+		private function formatterHtml($pData) {
 			$html = '<ul>';
 			foreach ($pData as $row) {
 				$datetime = DateTime::createFromFormat('YmdHis', $row['rev_timestamp']);
