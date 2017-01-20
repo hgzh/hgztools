@@ -139,7 +139,7 @@
 					$cmt = preg_replace('/\/\*\s(.+)\s\*\//', '<a href="https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/Special:PermaLink/' . $row['rev_id'] . '#$1">→‎</a>$1:', $cmt);
 					$html .= ' <i>('. $cmt . ')</i> ';
 				}
-				$html .= '</li>';
+				$html .= "</li>\r\n";
 			}
 			$html .= '</ul>';
 			$this->page->addHTML($html);
@@ -229,7 +229,7 @@
 				$this->page->addInline('p', 'found ' . $q1->num_rows . ' revisions for article ' . 
 					parent::buildWikilink($this->par['lang'], $this->par['project'], $this->par['page'], str_replace('_', ' ', $this->par['page'])) . ' (<a href="https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/w/index.php?title=' . $this->par['page'] . '&action=history">History</a>).');
 
-				$this->page->openBlock('div', 'iw-code');
+				$this->page->openBlock('pre', 'iw-code');
 					
 				$result = Database::fetchResult($q1);
 				if ($this->par['format'] == 'wiki_int') {
