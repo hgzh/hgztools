@@ -571,7 +571,6 @@
 			
 			if (isset($this->allowed[$name]['pattern']) && $this->allowed[$name]['pattern'] != '' && $ret != '') {
 				if (!preg_match($this->allowed[$name]['pattern'], $ret)) {
-					$this->setMessage('Validation failed for parameter ' . $param, true);
 					return false;
 				}
 			}

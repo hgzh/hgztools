@@ -40,17 +40,16 @@
 			$this->finish();
 		}
 		
-		private function mustSkip($pDatetime) {
-			$dateraw = $pDatetime->format('Ymd');
+		private function mustSkip($pDate) {
 			if (isset($this->par['since']) && $this->par['since'] != '0000-00-00') {
 				$timestamp = str_replace('-', '', $this->par['since']);
-				if ($dateraw < $timestamp) { 
+				if ($pDate < $timestamp) { 
 					return true; 
 				}
 			}
 			if (isset($this->par['until']) && $this->par['until'] != '0000-00-00')  {
 				$timestamp = str_replace('-', '', $this->par['until']);
-				if ($dateraw > $timestamp) {
+				if ($pDate > $timestamp) {
 					return true;
 				}
 			}
@@ -63,13 +62,12 @@
 			
 			$html = '';
 			foreach ($pData as $row) {
-				$datetime = DateTime::createFromFormat('YmdHis', $pData['rev_timestamp']);
-				
-				if ($this->mustSkip($datetime) === true) {
+				$datetime = DateTime::createFromFormat('YmdHis', $row['rev_timestamp']);
+				$dateraw  = $datetime->format('Ymd');
+				$dateform = $datetime->format('Y-m-d H:i');
+				if ($this->mustSkip($dateraw) === true) {
 					continue;
 				}
-
-				$dateform = $datetime->format('Y-m-d H:i');
 				
 				$html .= '* [[' . $sc . 'Special:PermaLink/';
 				$html .= $row['rev_id'] . '|' . $dateform . ' (UTC)]]';
@@ -93,13 +91,12 @@
 		private function formatterWikiExtern($pData) {
 			$html = '';
 			foreach ($pData as $row) {
-				$datetime = DateTime::createFromFormat('YmdHis', $pData['rev_timestamp']);
-				
-				if (mustSkip($datetime) === true) {
+				$datetime = DateTime::createFromFormat('YmdHis', $row['rev_timestamp']);
+				$dateraw  = $datetime->format('Ymd');
+				$dateform = $datetime->format('Y-m-d H:i');
+				if ($this->mustSkip($dateraw) === true) {
 					continue;
 				}
-
-				$dateform = $datetime->format('Y-m-d H:i');
 				
 				$html .= '* [https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/Special:PermaLink/';
 				$html .= $row['rev_id'] . ' ' . $dateform . ' (UTC)]';
@@ -123,13 +120,12 @@
 		private function formatterWikiHtml($pData) {
 			$html = '<ul>';
 			foreach ($pData as $row) {
-				$datetime = DateTime::createFromFormat('YmdHis', $pData['rev_timestamp']);
-				
-				if (mustSkip($datetime) === true) {
+				$datetime = DateTime::createFromFormat('YmdHis', $row['rev_timestamp']);
+				$dateraw  = $datetime->format('Ymd');
+				$dateform = $datetime->format('Y-m-d H:i');
+				if ($this->mustSkip($dateraw) === true) {
 					continue;
 				}
-
-				$dateform = $datetime->format('Y-m-d H:i');
 				
 				$html .= '<li>';
 				$html .= '<a href="https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/Special:PermaLink/';
