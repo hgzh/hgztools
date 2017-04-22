@@ -39,6 +39,7 @@
 	$page->addInline('h2', 'Tools for German Wikipedia');
 	$page->openBlock('ul');
 	$page->addInline('li', '<a href="wikidata-badges/">Wikidata-Auszeichnungs-Abgleich</a>');
+	$page->addInline('li', '<a href="deadlinksbyuser/">Tote Links nach Benutzer</a>');
 	$page->closeBlock();
 	
 	$page->addInline('p', 'Contact: ' . Hgz::buildWikilink('de', 'wikipedia', 'User talk:Hgzh', 'hgzh @ de.wikipedia') . ', Source: <a href="https://github.com/hgzh">hgzh @ github.com</a>');
@@ -46,6 +47,14 @@
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('h2', 'Change log');
+	$page->addInline('h3', '2017-04-22');
+	$page->openBlock('ul');
+	$page->addInline('li', 'Added dead link by user checker for German Wikipedia');
+	$page->closeBlock();
+	$page->addInline('h3', '2017-01-20');
+	$page->openBlock('ul');
+	$page->addInline('li', 'Uploaded rewritten contributors tool');
+	$page->closeBlock();
 	$page->addInline('h3', '2015-09-29');
 	$page->openBlock('ul');
 	$page->addInline('li', 'Added Useless defaultsort tool');
