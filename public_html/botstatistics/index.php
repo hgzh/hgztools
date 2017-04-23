@@ -32,13 +32,13 @@
 		*/
 		public function __construct() {
 			// create new page object
-			$page = new HtmlPage('Bot statistics');
+			$this->page = new HtmlPage('Bot statistics');
 
 			// create new database object
-			$db = new Database();
+			$this->db = new Database();
 			
 			// create new request validator
-			$rq = new RequestValidator();
+			$this->rq = new RequestValidator();
 			
 			// execute tool
 			$this->run();
