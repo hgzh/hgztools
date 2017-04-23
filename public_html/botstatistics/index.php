@@ -80,9 +80,9 @@
 			$optionForm->addHTML('<tr><td>');
 			$optionForm->addLabel('lang', 'Project');
 			$optionForm->addHTML('</td><td>');
-			$optionForm->addInput('lang', $par['lang'], '', 7, true);
+			$optionForm->addInput('lang', $this->par['lang'], '', 7, true);
 			$optionForm->addHTML('&nbsp;.&nbsp;');
-			$optionForm->addInput('project', $par['project'], '', 20, true);
+			$optionForm->addInput('project', $this->par['project'], '', 20, true);
 			$optionForm->addHTML('&nbsp;.org</td></tr>');
 			
 			// submit button
@@ -116,7 +116,7 @@
 				case 'reg':  $t1 .= 'user_registration '; break;
 				case 'ec':   $t1 .= 'user_editcount '; break;
 			}
-			$t1 .= strtoupper($par['dir']) . ';';
+			$t1 .= strtoupper($this->par['dir']) . ';';
 			
 			// save current sort direction
 			if ($this->par['dir'] == 'asc') {
@@ -133,9 +133,9 @@
 			$this->page->openBlock('table', 'iw-table iw-full');
 			$this->page->openBlock('tr');
 			$this->page->addInline('th', '#');
-			$this->page->addInline('th', '<a href="index.php?lang=' . $par['lang'] . '&project=' . $par['project'] . '&sort=name&dir=' . $sortNow . '">Name</a>');
-			$this->page->addInline('th', '<a href="index.php?lang=' . $par['lang'] . '&project=' . $par['project'] . '&sort=reg&dir=' . $sortNow . '">Registration</a>');
-			$this->page->addInline('th', '<a href="index.php?lang=' . $par['lang'] . '&project=' . $par['project'] . '&sort=ec&dir=' . $sortNow . '">Editcount</a>');
+			$this->page->addInline('th', '<a href="index.php?lang=' . $this->par['lang'] . '&project=' . $this->par['project'] . '&sort=name&dir=' . $sortNow . '">Name</a>');
+			$this->page->addInline('th', '<a href="index.php?lang=' . $this->par['lang'] . '&project=' . $this->par['project'] . '&sort=reg&dir=' . $sortNow . '">Registration</a>');
+			$this->page->addInline('th', '<a href="index.php?lang=' . $this->par['lang'] . '&project=' . $this->par['project'] . '&sort=ec&dir=' . $sortNow . '">Editcount</a>');
 			$this->page->addInline('th', 'Edits/day');
 			$this->page->closeBlock();
 			
