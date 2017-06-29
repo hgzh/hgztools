@@ -119,29 +119,28 @@
 			// build query for outgoing links
 			$this->par['page'] = str_replace(' ', '_', $this->par['page']);
 			$t1  = 'SELECT s.pl_title';
-			$t1 .= ' FROM pagelinks s, page sp';
-			$t1 .= ' WHERE s.pl_from = sp.page_id';
-			$t1 .= ' AND sp.page_title = ?';
-			$t1 .= ' AND s.pl_namespace = 0';
-			$t1 .= ' AND sp.page_namespace = 0';
+			$t1 .= ' FROM pagelinks s';
+			$t1 .= ' INNER JOIN page tp ON (s.pl_title = tp.page_title AND s.pl_namespace = tp.page_namespace)';
+			$t1 .= ' INNER JOIN page sp ON (s.pl_from = sp.page_id AND s.pl_namespace = sp.page_namespace AND sp.page_title = ?)';
+			$t1 .= ' WHERE s.pl_namespace = 0';
 			$t1 .= ' AND s.pl_from_namespace = 0';
 			
 			// execute query and get results
 			$q1 = $this->db->prepare($t1);
 			$q1->bind_param('s', $this->par['page']);
+			$q1->execute();
 			$r1 = Database::fetchResult($q1);
 			
 			// build query for incoming links
 			$t2  = 'SELECT tp.page_title';
-			$t2 .= ' FROM pagelinks t, page tp';
-			$t2 .= ' WHERE t.pl_from = tp.page_id';
-			$t2 .= ' AND t.pl_title = ?';
-			$t2 .= ' AND t.pl_namespace = 0';
-			$t2 .= ' AND t.pl_from_namespace = 0';
+			$t2 .= ' FROM page tp';
+			$t2 .= ' INNER JOIN pagelinks t ON (tp.page_id = t.pl_from AND t.pl_title = ? AND t.pl_namespace = 0 AND t.pl_from_namespace = 0)';
+			$t2 .= ' WHERE tp.page_is_redirect = 0';
 			
 			// execute query and get results
 			$q2 = $this->db->prepare($t2);
 			$q2->bind_param('s', $this->par['page']);
+			$q2->execute();
 			$r2 = Database::fetchResult($q2);
 			
 			$out = [];
@@ -162,32 +161,32 @@
 			
 			// no backlinks
 			if (count($noback) != 0) {
-				$page->addInline('h3', 'Articles linked from ' . str_replace('_', ' ', $this->par['page']) . ' with no backlinks:');
-				$page->openBlock('ul');
+				$this->page->addInline('h3', 'Articles linked from ' . str_replace('_', ' ', $this->par['page']) . ' with no backlinks:');
+				$this->page->openBlock('ul');
 				foreach ($noback as $v1) {
-					$page->addInline('li', Hgz::buildWikilink($this->par['lang'], $this->par['project'], $v1, str_replace('_', ' ', $v1)));
+					$this->page->addInline('li', Hgz::buildWikilink($this->par['lang'], $this->par['project'], $v1, str_replace('_', ' ', $v1)));
 				}
-				$page->closeBlock();
+				$this->page->closeBlock();
 			}
 
 			// no wikilinks
 			if (count($nolink) != 0) {
-				$page->addInline('h3', 'Articles with links to ' . str_replace('_', ' ', $this->par['page']) . ' but no links from here:');
-				$page->openBlock('ul');
+				$this->page->addInline('h3', 'Articles with links to ' . str_replace('_', ' ', $this->par['page']) . ' but no links from here:');
+				$this->page->openBlock('ul');
 				foreach ($nolink as $v2) {
-					$page->addInline('li', Hgz::buildWikilink($this->par['lang'], $this->par['project'], $v2, str_replace('_', ' ', $v2)));
+					$this->page->addInline('li', Hgz::buildWikilink($this->par['lang'], $this->par['project'], $v2, str_replace('_', ' ', $v2)));
 				}
-				$page->closeBlock();
+				$this->page->closeBlock();
 			}
 
 			// common links
 			if (count($common) != 0) {
-				$page->addInline('h3', 'Articles linked from ' . str_replace('_', ' ', $this->par['page']) . ' with backlinks (common links):');
-				$page->openBlock('ul');
+				$this->page->addInline('h3', 'Articles linked from ' . str_replace('_', ' ', $this->par['page']) . ' with backlinks (common links):');
+				$this->page->openBlock('ul');
 				foreach ($common as $v3) {
-					$page->addInline('li', Hgz::buildWikilink($this->par['lang'], $this->par['project'], $v3, str_replace('_', ' ', $v3)));
+					$this->page->addInline('li', Hgz::buildWikilink($this->par['lang'], $this->par['project'], $v3, str_replace('_', ' ', $v3)));
 				}
-				$page->closeBlock();
+				$this->page->closeBlock();
 			}
 			
 			// close query and close result area
