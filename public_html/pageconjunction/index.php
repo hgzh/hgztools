@@ -123,7 +123,7 @@
 			$t1 .= ' WHERE s.pl_from = sp.page_id';
 			$t1 .= ' AND sp.page_title = ?';
 			$t1 .= ' AND s.pl_namespace = 0';
-			$t1 .= ' AND sp.pl_namespace = 0';
+			$t1 .= ' AND sp.page_namespace = 0';
 			$t1 .= ' AND s.pl_from_namespace = 0';
 			
 			// execute query and get results
