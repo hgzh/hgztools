@@ -31,6 +31,7 @@
 	$page->addInline('li', '<a href="botstatistics/">Bot statistics</a>');
 	$page->addInline('li', '<a href="categoryredirects/">Category redirects</a>');
 	$page->addInline('li', '<a href="contributors/">Contributors tool</a>');
+	$page->addInline('li', '<a href="pageconjunction/">Page conjunction</a>');
 	$page->addInline('li', '<a href="pagepropmaintenance/">Page prop maintenance</a>');
 	$page->addInline('li', '<a href="uselessdefaultsorts/">Useless defaultsorts</a>');
 	$page->addInline('li', '<a href="uselessprotections/">Useless protections</a>');
@@ -47,6 +48,10 @@
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('h2', 'Change log');
+	$page->addInline('h3', '2017-07-01');
+	$page->openBlock('ul');
+	$page->addInline('li', 'Added page conjunction tool');
+	$page->closeBlock();
 	$page->addInline('h3', '2017-04-22');
 	$page->openBlock('ul');
 	$page->addInline('li', 'Added dead link by user checker for German Wikipedia');

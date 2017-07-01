@@ -69,8 +69,8 @@
 			$this->page->addInline('p', 'This tool generates reports about wikilinks in one article:');
 			$this->page->openBlock('ul');
 			$this->page->addInline('li', 'Links from given article which have no backlinks from target article');
-			$this->page->addInline('li', 'Backlinks from foreign articles which have no links from given article');
-			$this->page->addInline('li', 'Links from given article with backlinks from foreign articles');
+			$this->page->addInline('li', 'Backlinks from other articles which have no links from given article');
+			$this->page->addInline('li', 'Links from given article with backlinks from other articles');
 			$this->page->closeBlock();
 			$this->page->addInline('h2', 'Options');
 			
@@ -96,7 +96,7 @@
 			
 			// submit button
 			$optionForm->addHTML('<tr><td colspan="2">');
-			$optionForm->addButton('submit', 'View link report');
+			$optionForm->addButton('submit', 'View page conjunction');
 			$optionForm->addHTML('</td></tr>');
 			
 			$optionForm->addHTML('</table>');
@@ -109,9 +109,6 @@
 			tool action after option form has been submitted
 		*/
 		private function formSubmitted() {
-			// open result area
-			$this->page->openBlock('div', 'iw-content');		
-			$this->page->addInline('h2', 'Results');
 			
 			// connect db
 			$this->db->replicaConnect(Database::getName($this->par['lang'], $this->par['project']));
@@ -155,12 +152,45 @@
 				$inc[] = $l2['page_title'];
 			}
 			
+			// get arrays
 			$common = array_intersect($out, $inc);
 			$noback = array_diff($out, $inc);
 			$nolink = array_diff($inc, $out);
 			
+			// sort arrays
+			sort($common);
+			sort($noback);
+			sort($nolink);
+			
+			// close queries
+			$q1->close();
+			$q2->close();
+			
+			// open statistics area
+			$this->page->openBlock('div', 'iw-content');
+			$this->page->addInline('h2', 'Statistics');
+			
+			$this->page->addInline('p', 'Page conjunction for ' . Hgz::buildWikilink($this->par['lang'], $this->par['project'], $this->par['page'], str_replace('_', ' ', $this->par['page']))
+																. ' (' . Hgz::buildWikilink($this->par['lang'], $this->par['project'], 'Special:Whatlinkshere/' . $this->par['page'], 'What links here') . ')');
+			
+			// statistics
+			$this->page->openBlock('p');
+			$this->page->openBlock('ul');
+			$this->page->addInline('li', count($out) . ' links on this page');
+			$this->page->addInline('li', count($inc) . ' links to this page');
+			$this->page->addInline('li', '<a href="#noback">' . count($noback) . ' links on this page without backlinks</a>');
+			$this->page->addInline('li', '<a href="#nolink">' . count($nolink) . ' incoming links without corresponding outgoing links</a>');
+			$this->page->addInline('li', '<a href="#mutual">' . count($common) . ' mutual links</a>');
+			$this->page->closeBlock(2);
+			
+			// open result area
+			$this->page->closeBlock();
+			$this->page->openBlock('div', 'iw-content');
+			$this->page->addInline('h2', 'Results');
+			
 			// no backlinks
 			if (count($noback) != 0) {
+				$this->page->addHTML('<span id="noback"></span>');
 				$this->page->addInline('h3', 'Articles linked from ' . str_replace('_', ' ', $this->par['page']) . ' with no backlinks:');
 				$this->page->openBlock('ul');
 				foreach ($noback as $v1) {
@@ -171,6 +201,7 @@
 
 			// no wikilinks
 			if (count($nolink) != 0) {
+				$this->page->addHTML('<span id="nolink"></span>');
 				$this->page->addInline('h3', 'Articles with links to ' . str_replace('_', ' ', $this->par['page']) . ' but no links from here:');
 				$this->page->openBlock('ul');
 				foreach ($nolink as $v2) {
@@ -181,7 +212,8 @@
 
 			// common links
 			if (count($common) != 0) {
-				$this->page->addInline('h3', 'Articles linked from ' . str_replace('_', ' ', $this->par['page']) . ' with backlinks (common links):');
+				$this->page->addHTML('<span id="mutual"></span>');
+				$this->page->addInline('h3', 'Articles linked from ' . str_replace('_', ' ', $this->par['page']) . ' with backlinks (mutual links):');
 				$this->page->openBlock('ul');
 				foreach ($common as $v3) {
 					$this->page->addInline('li', Hgz::buildWikilink($this->par['lang'], $this->par['project'], $v3, str_replace('_', ' ', $v3)));
@@ -189,9 +221,7 @@
 				$this->page->closeBlock();
 			}
 			
-			// close query and close result area
-			$q1->close();
-			$q2->close();
+			// close result area
 			$this->page->closeBlock();
 		}
 
