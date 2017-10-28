@@ -48,6 +48,10 @@
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('h2', 'Change log');
+	$page->addInline('h3', '2017-10-28');
+	$page->openBlock('ul');
+	$page->addInline('li', 'Switched all tools to new replica servers');
+	$page->closeBlock();
 	$page->addInline('h3', '2017-07-01');
 	$page->openBlock('ul');
 	$page->addInline('li', 'Added page conjunction tool');

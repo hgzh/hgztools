@@ -77,7 +77,7 @@
 			
 			// footer setzen, Dokument beenden
 			$this->foot .= '</div><div class="iw-footer">';
-			$this->foot .= '<a href="https://tools.wmflabs.org/hgztools">hgztools</a> powered by <a href="https://wikitech.wikimedia.org">Wikimedia Labs</a>.';
+			$this->foot .= '<a href="https://tools.wmflabs.org/hgztools">hgztools</a> powered by <a href="https://wikitech.wikimedia.org/wiki/Portal:Toolforge">Toolforge</a>.';
 			$this->foot .= '</div></div>';
 			$this->foot .= '</body>';
 			$this->foot .= '</html>';
@@ -416,7 +416,7 @@
 			
 			$mycnf = parse_ini_file( "/data/project/hgztools/replica.my.cnf" );
 			$cluster = ( preg_match( '/[-_]p$/', $database ) ) ? substr( $database, 0, -2 ) : $database;
-			parent::connect($cluster . '.labsdb', $mycnf['user'], $mycnf['password']);
+			parent::connect($cluster . '.analytics.db.svc.eqiad.wmflabs', $mycnf['user'], $mycnf['password']);
 			unset($mycnf);
 			
 			if( $this->connect_error ) {
