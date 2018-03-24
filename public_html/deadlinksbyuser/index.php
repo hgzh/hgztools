@@ -60,8 +60,8 @@
 		*/
 		private function printToolHead() {
 			$this->page->openBlock('div', 'iw-content');
-			$this->page->addInline('p', 'Dieses Tool zeigt alle vom angegebenen Benutzer erstellten Artikel an, bei denen'
-										. 'auf der Diskussionsseite ein Hinweis auf einen defekten Weblink hinterlassen wurde.');
+			$this->page->addInline('p', 'Dieses Tool zeigt vom angegebenen Benutzer erstellte Artikel an, bei denen defekte Weblinks gefunden und gekennzeichnet worden sind.'
+									. ' Dies kann eine Defekte-Weblink-Meldung auf der Diskussionsseite oder die Einordnung des Artikels in eine Defekte-Weblink-Kategorie sein.');
 			
 			$this->page->addInline('h2', 'Optionen');
 			
@@ -102,17 +102,19 @@
 			$this->db->replicaConnect(Database::getName('de', 'wikipedia'));
 			
 			// build query
-			$t1  = 'SELECT p.page_title';
+			$t1  = 'SELECT DISTINCT p.page_title';
 			$t1 .= ' FROM page p';
 			$t1 .= ' INNER JOIN revision_userindex rv ON rv.rev_page = p.page_id';
-			$t1 .= ' INNER JOIN page pd ON p.page_title = pd.page_title';
-			$t1 .= ' INNER JOIN categorylinks cl ON cl.cl_from = pd.page_id';
+			$t1 .= ' LEFT JOIN page pd ON p.page_title = pd.page_title';
+			$t1 .= ' LEFT JOIN categorylinks clp ON clp.cl_from = p.page_id';
+			$t1 .= ' LEFT JOIN categorylinks clpd ON clpd.cl_from = pd.page_id';
 			$t1 .= ' WHERE rv.rev_user_text = ?';
 			$t1 .= ' AND rv.rev_parent_id = 0';
 			$t1 .= ' AND p.page_namespace = 0';
-			$t1 .= ' AND p.page_is_redirect = 0';
 			$t1 .= ' AND pd.page_namespace = 1';
-			$t1 .= ' AND cl.cl_to = "Wikipedia:Defekte_Weblinks/Bot"';
+			$t1 .= ' AND p.page_is_redirect = 0';
+			$t1 .= ' AND (clp.cl_to REGEXP "Wikipedia\:(Defekte\_Weblinks\/Ungeprüfte\_Botmarkierungen.*|Weblink\_offline)" OR clpd.cl_to = "Wikipedia:Defekte_Weblinks/Bot")';
+			$t1 .= ' ORDER BY p.page_title';
 			$q1 = $this->db->prepare($t1);
 			$q1->bind_param('s', $this->par['user']);
 			

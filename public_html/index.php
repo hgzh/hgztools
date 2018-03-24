@@ -48,6 +48,10 @@
 	
 	$page->openBlock('div', 'iw-content');
 	$page->addInline('h2', 'Change log');
+	$page->addInline('h3', '2018-03-24');
+	$page->openBlock('ul');
+	$page->addInline('li', 'Added deadlink page categorization support to deadlinksbyuser tool');
+	$page->closeBlock();
 	$page->addInline('h3', '2017-10-28');
 	$page->openBlock('ul');
 	$page->addInline('li', 'Switched all tools to new replica servers');
