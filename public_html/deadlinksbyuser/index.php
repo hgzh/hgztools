@@ -95,9 +95,6 @@
 			$this->page->openBlock('div', 'iw-content');
 			$this->page->addInline('h2', 'Ergebnisse');
 			
-			// replace space by underscore as in the database
-			$this->par['user'] = str_replace(' ', '_', $this->par['user']);
-			
 			// connect db
 			$this->db->replicaConnect(Database::getName('de', 'wikipedia'));
 			
