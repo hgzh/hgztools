@@ -68,6 +68,12 @@ ul.iw-navigation a:hover {
 	color: rgb(130, 130, 130);
 }
 
+.iw-error {
+	font-size: 85%;
+	font-style: italic;
+	color: rgb(255, 50, 50);
+}
+
 .iw-code {
 	font-size: 85%;
 	font-family: "Consolas", "Courier New", "Courier", monospace;

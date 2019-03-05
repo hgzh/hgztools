@@ -75,8 +75,8 @@
 				$html .= '[[' . $sc . 'User:';
 				$html .= $row['rev_user_text'] . '|' . $row['rev_user_text'] . ']]';
 
-				if (isset($row['rev_comment']) && $row['rev_comment'] != '') {
-					$cmt = $row['rev_comment'];
+				if (isset($row['comment_text']) && $row['comment_text'] != '') {
+					$cmt = $row['comment_text'];
 					$cmt = str_replace('[[', '[[' . $sc, $cmt);
 					$cmt = preg_replace('/\{\{(.+)\}\}/', '&lt;nowiki&gt;{{$1}}}&lt;/nowiki&gt;', $cmt);
 					$cmt = preg_replace('/\/\*\s(.+)\s\*\//', '[[' . $sc . 'Special:PermaLink/' . $row['rev_id'] . '#$1|→‎]]$1:', $cmt);
@@ -104,8 +104,8 @@
 				$html .= '[https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/User:';
 				$html .= $row['rev_user_text'] . ' ' . $row['rev_user_text'] . ']';
 
-				if (isset($row['rev_comment']) && $row['rev_comment'] != '') {
-					$cmt = $row['rev_comment'];
+				if (isset($row['comment_text']) && $row['comment_text'] != '') {
+					$cmt = $row['comment_text'];
 					$cmt = preg_replace('/\[\[(.+)\]\]/', '&lt;nowiki&gt;[[$1]]]&lt;/nowiki&gt;', $cmt);
 					$cmt = preg_replace('/\{\{(.+)\}\}/', '&lt;nowiki&gt;{{$1}}}&lt;/nowiki&gt;', $cmt);
 					$cmt = preg_replace('/\/\*\s(.+)\s\*\//', '[https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/Special:PermaLink/' . $row['rev_id'] . '#$1 →‎]$1:', $cmt);
@@ -134,8 +134,8 @@
 				$html .= '&lt;a href="https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/User:';
 				$html .= $row['rev_user_text'] . '">' . $row['rev_user_text'] . '&lt;/a>';
 
-				if (isset($row['rev_comment']) && $row['rev_comment'] != '') {
-					$cmt = $row['rev_comment'];
+				if (isset($row['comment_text']) && $row['comment_text'] != '') {
+					$cmt = $row['comment_text'];
 					$cmt = preg_replace('/\/\*\s(.+)\s\*\//', '&lt;a href="https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/Special:PermaLink/' . $row['rev_id'] . '#$1">→‎&lt;/a>$1:', $cmt);
 					$html .= ' &lt;i>('. $cmt . ')&lt;/i> ';
 				}
@@ -216,15 +216,24 @@
 			
 			$this->db->replicaConnect(Database::getName($this->par['lang'], $this->par['project']));
 			$this->par['page'] = str_replace(' ', '_', $this->par['page']);
-			$this->par['page'] = $this->db->real_escape_string($this->par['page']);
-			$t1  = 'SELECT revision_userindex.rev_timestamp, revision_userindex.rev_user_text, revision_userindex.rev_comment, revision_userindex.rev_id FROM revision_userindex, page WHERE page.page_title = \'' . $this->par['page'] . '\' ';
-			$t1 .= 'AND page.page_namespace = 0 AND revision_userindex.rev_page = page.page_id ';
-			$t1 .= 'ORDER BY revision_userindex.rev_timestamp DESC;';
+			$t1  = 'SELECT revision_userindex.rev_timestamp, revision_userindex.rev_user_text, comment.comment_text, revision_userindex.rev_id';
+			$t1 .= ' FROM revision_userindex, page, comment';
+			$t1 .= ' WHERE revision_userindex.rev_page = page.page_id';
+			$t1 .= ' AND revision_userindex.rev_comment_id = comment.comment_id';
+			$t1 .= ' AND page.page_title = ?';
+			$t1 .= ' AND page.page_namespace = 0';
+			$t1 .= ' ORDER BY revision_userindex.rev_timestamp DESC';
 			
-			$q1 = $this->db->query($t1);
+			$q1 = $this->db->executePreparedQuery($t1, 's', $this->par['page']);
+						
+			if (Database::checkSqlQueryObject($q1) === false) {
+				$this->page->addInline('p', 'SQL Error: ' . $this->db->error, 'iw-error');
+				$this->page->closeBlock();
+				return;
+			}
 			
 			if ($q1->num_rows === 0) {
-				$this->page->addInline('p', 'there were no results for this query', 'iw-info');
+				$this->page->addInline('p', 'there were no results for this query.', 'iw-info');
 			} else {
 				$this->page->addInline('p', 'found ' . $q1->num_rows . ' revisions for article ' . 
 					parent::buildWikilink($this->par['lang'], $this->par['project'], $this->par['page'], str_replace('_', ' ', $this->par['page'])) . ' (<a href="https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/w/index.php?title=' . $this->par['page'] . '&action=history">History</a>).');

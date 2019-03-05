@@ -435,6 +435,85 @@
 		}
 
 		/**
+		 * übergibt rohe Datenwerte als Referenz
+		 *
+		 * @parameter
+		 * - arr : Array mit Werten
+		 *
+		 * @rückgabe
+		 * - Array mit Referenzen
+		 */
+		private function refValues($arr){
+			if (strnatcmp(phpversion(), '5.3') >= 0) {
+				$refs = [];
+				foreach($arr as $k1 => $v1)
+					$refs[$k1] = &$arr[$k1];
+				return $refs;
+			}
+			return $arr;
+		}
+		
+		/**
+		 * erstellt ein prepared statement und führt daraus direkt eine Datenbankabfrage durch
+		 *
+		 * @parameter
+		 * - (1)    : Query-String
+		 * - (2)    : Referenztypen (1. Parameter von bind_param)
+		 * - (3...) : Referenzen (folgende Parameter von bind_param)
+		 *
+		 * @rückgabe
+		 * - Statementobjekt
+		 */
+		public function executePreparedQuery() {
+			
+			// mindestens 1 Parameter muss vorhanden sein
+			$numParam = func_num_args();
+			if ($numParam < 1) {
+				throw new Exception('executeQuery: Falsche Anzahl von Parametern');
+			}
+			
+			// alle Parameter beziehen
+			$parList = func_get_args();
+			
+			$query = $this->prepare($parList[0]);
+			if ($query === false) {
+				throw new Exception('executeQuery: Fehler beim Erstellen des Ausdrucks');
+			}
+			
+			// ersten Parameter entfernen, der Rest wird an bind_param übergeben
+			unset($parList[0]);
+			
+			// Übergabe, falls noch Parameter vorhanden sind
+			if (count($parList) != 0) {
+				call_user_func_array([$query, 'bind_param'], $this->refValues($parList));
+			}
+			
+			// Abfrage ausführen und Ergebnisse holen
+			$query->execute();
+			$query->store_result();
+			
+			// Statement-Objekt zurückgeben
+			return $query;
+		}
+
+		/**
+		 * Ergebnis einer Abfrage prüfen
+		 *
+		 * @parameter
+		 * - query : Objekt
+		 *
+		 */
+		public static function checkSqlQueryObject($query) {
+			
+			if (($query instanceof mysqli_stmt) || ($query instanceof mysqli_result)) {
+				return true;
+			} else {
+				return false;
+			}
+			
+		}
+
+		/**
 		 * Datenbanknamen ermitteln
 		 *
 		 * @parameter
