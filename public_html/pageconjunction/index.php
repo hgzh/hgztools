@@ -122,10 +122,17 @@
 			$t1 .= ' WHERE s.pl_namespace = 0';
 			$t1 .= ' AND s.pl_from_namespace = 0';
 			
-			// execute query and get results
-			$q1 = $this->db->prepare($t1);
-			$q1->bind_param('s', $this->par['page']);
-			$q1->execute();
+			// execute query
+			$q1 = $this->db->executePreparedQuery($t1, 's', $this->par['page']);
+			
+			// check for sql errors
+			if (Database::checkSqlQueryObject($q1) === false) {
+				$this->page->openBlock('div', 'iw-content');
+				$this->page->addInline('p', 'SQL Error: ' . $this->db->error, 'iw-error');
+				$this->page->closeBlock();
+				return;
+			}
+			
 			$r1 = Database::fetchResult($q1);
 			
 			// build query for incoming links
@@ -134,10 +141,17 @@
 			$t2 .= ' INNER JOIN pagelinks t ON (tp.page_id = t.pl_from AND t.pl_title = ? AND t.pl_namespace = 0 AND t.pl_from_namespace = 0)';
 			$t2 .= ' WHERE tp.page_is_redirect = 0';
 			
-			// execute query and get results
-			$q2 = $this->db->prepare($t2);
-			$q2->bind_param('s', $this->par['page']);
-			$q2->execute();
+			// execute query
+			$q2 = $this->db->executePreparedQuery($t2, 's', $this->par['page']);
+
+			// check for sql errors
+			if (Database::checkSqlQueryObject($q2) === false) {
+				$this->page->openBlock('div', 'iw-content');
+				$this->page->addInline('p', 'SQL Error: ' . $this->db->error, 'iw-error');
+				$this->page->closeBlock();
+				return;
+			}
+
 			$r2 = Database::fetchResult($q2);
 			
 			$out = [];

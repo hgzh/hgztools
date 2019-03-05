@@ -98,7 +98,7 @@
 			// connect db
 			$this->db->replicaConnect(Database::getName('de', 'wikipedia'));
 			
-			// build query
+			// build and execute query
 			$t1  = 'SELECT DISTINCT p.page_title';
 			$t1 .= ' FROM page p';
 			$t1 .= ' INNER JOIN revision_userindex rv ON rv.rev_page = p.page_id';
@@ -110,11 +110,15 @@
 			$t1 .= ' AND p.page_is_redirect = 0';
 			$t1 .= ' AND (clp.cl_to REGEXP "Wikipedia\:(Defekte\_Weblinks\/Ungeprüfte\_Botmarkierungen.*|Weblink\_offline)" OR clpd.cl_to = "Wikipedia:Defekte_Weblinks/Bot")';
 			$t1 .= ' ORDER BY p.page_title';
-			$q1 = $this->db->prepare($t1);
-			$q1->bind_param('s', $this->par['user']);
+			$q1 = $this->db->executePreparedQuery($t1, 's', $this->par['user']);
 			
-			// execute query and get results
-			$q1->execute();
+			// check for sql errors
+			if (Database::checkSqlQueryObject($q1) === false) {
+				$this->page->addInline('p', 'SQL Error: ' . $this->db->error, 'iw-error');
+				$this->page->closeBlock();
+				return;
+			}
+			
 			$r1 = Database::fetchResult($q1);
 			
 			if ($q1->num_rows === 0) {

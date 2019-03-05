@@ -127,6 +127,14 @@
 			
 			// execute query and get results
 			$q1 = $this->db->query($t1);
+			
+			// check for sql errors
+			if (Database::checkSqlQueryObject($q1) === false) {
+				$this->page->addInline('p', 'SQL Error: ' . $this->db->error, 'iw-error');
+				$this->page->closeBlock();
+				return;
+			}
+			
 			$r1 = Database::fetchResult($q1);
 			
 			// result table header

@@ -119,13 +119,21 @@
 				$t1 .= ' ORDER BY anz DESC;';
 			}
 			
-			// execute query and get results
+			// execute query
 			$q1 = $this->db->query($t1);
+			
+			// check for sql errors
+			if (Database::checkSqlQueryObject($q1) === false) {
+				$this->page->addInline('p', 'SQL Error: ' . $this->db->error, 'iw-error');
+				$this->page->closeBlock();
+				return;
+			}
+			
 			$r1 = Database::fetchResult($q1);
 			
 			if ($q1->num_rows === 0) {
 				// no results
-				$this->page->addInline('p', 'there were no results for this query', 'iw-info');
+				$this->page->addInline('p', 'there were no results for this query.', 'iw-info');
 			} else {
 				// results found, results table header
 				$this->page->openBlock('table', 'iw-table');
