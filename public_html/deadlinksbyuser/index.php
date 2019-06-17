@@ -104,7 +104,8 @@
 			$t1 .= ' INNER JOIN revision_userindex rv ON rv.rev_page = p.page_id';
 			$t1 .= ' LEFT JOIN (page pd, categorylinks clpd) ON (p.page_title = pd.page_title AND clpd.cl_from = pd.page_id AND pd.page_namespace = 1)';
 			$t1 .= ' LEFT JOIN categorylinks clp ON clp.cl_from = p.page_id';
-			$t1 .= ' WHERE rv.rev_user_text = ?';
+			$t1 .= ' LEFT JOIN actor ac ON ac.actor_id = rv.rev_actor';
+			$t1 .= ' WHERE ac.actor_name = ?';
 			$t1 .= ' AND rv.rev_parent_id = 0';
 			$t1 .= ' AND p.page_namespace = 0';
 			$t1 .= ' AND p.page_is_redirect = 0';

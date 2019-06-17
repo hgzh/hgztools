@@ -73,7 +73,7 @@
 				$html .= $row['rev_id'] . '|' . $dateform . ' (UTC)]]';
 				$html .= ' . . ';
 				$html .= '[[' . $sc . 'User:';
-				$html .= $row['rev_user_text'] . '|' . $row['rev_user_text'] . ']]';
+				$html .= $row['actor_name'] . '|' . $row['actor_name'] . ']]';
 
 				if (isset($row['comment_text']) && $row['comment_text'] != '') {
 					$cmt = $row['comment_text'];
@@ -102,7 +102,7 @@
 				$html .= $row['rev_id'] . ' ' . $dateform . ' (UTC)]';
 				$html .= ' . . ';
 				$html .= '[https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/User:';
-				$html .= $row['rev_user_text'] . ' ' . $row['rev_user_text'] . ']';
+				$html .= $row['actor_name'] . ' ' . $row['actor_name'] . ']';
 
 				if (isset($row['comment_text']) && $row['comment_text'] != '') {
 					$cmt = $row['comment_text'];
@@ -132,7 +132,7 @@
 				$html .= $row['rev_id'] . '">' . $dateform . ' (UTC)&lt;/a>';
 				$html .= ' . . ';
 				$html .= '&lt;a href="https://' . $this->par['lang'] . '.' . $this->par['project'] . '.org/wiki/User:';
-				$html .= $row['rev_user_text'] . '">' . $row['rev_user_text'] . '&lt;/a>';
+				$html .= $row['actor_name'] . '">' . $row['actor_name'] . '&lt;/a>';
 
 				if (isset($row['comment_text']) && $row['comment_text'] != '') {
 					$cmt = $row['comment_text'];
@@ -216,13 +216,14 @@
 			
 			$this->db->replicaConnect(Database::getName($this->par['lang'], $this->par['project']));
 			$this->par['page'] = str_replace(' ', '_', $this->par['page']);
-			$t1  = 'SELECT revision_userindex.rev_timestamp, revision_userindex.rev_user_text, comment.comment_text, revision_userindex.rev_id';
-			$t1 .= ' FROM revision_userindex, page, comment';
-			$t1 .= ' WHERE revision_userindex.rev_page = page.page_id';
-			$t1 .= ' AND revision_userindex.rev_comment_id = comment.comment_id';
-			$t1 .= ' AND page.page_title = ?';
-			$t1 .= ' AND page.page_namespace = 0';
-			$t1 .= ' ORDER BY revision_userindex.rev_timestamp DESC';
+			$t1  = 'SELECT rv.rev_timestamp, ac.actor_name, cm.comment_text, rv.rev_id';
+			$t1 .= ' FROM revision_userindex rv';
+			$t1 .= ' INNER JOIN page p ON rv.rev_page = p.page_id';
+			$t1 .= ' INNER JOIN comment cm ON rv.rev_comment_id = cm.comment_id';
+			$t1 .= ' INNER JOIN actor ac ON rv.rev_actor = ac.actor_id';
+			$t1 .= ' WHERE p.page_title = ?';
+			$t1 .= ' AND p.page_namespace = 0';
+			$t1 .= ' ORDER BY rv.rev_timestamp DESC';
 			
 			$q1 = $this->db->executePreparedQuery($t1, 's', $this->par['page']);
 						
