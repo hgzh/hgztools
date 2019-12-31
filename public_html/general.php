@@ -1,69 +1,54 @@
 <?php
-	/**
-	 * ##### general.php #####
-	 * Allgemeine Klassen und Methoden
-	 *
-	 */
+
 	error_reporting(E_ALL);
 		
 	/**
-	 * ##### CLASS HtmlPage CLASS #####
-	 * Klasse für Seitenaufbau
+	 * CLASS HtmlPage
+	 * creating a single web page
 	 */
 	class HtmlPage {
 		
 		/**
-		 * [string]
-		 * angezeigter Seiteninhalt
+		 * page content
 		 */
 		protected static $content = '';
 		
 		/**
-		 * [string]
-		 * Auszeichnungen im Kopfbereich
+		 * head contents
 		 */
 		private $head = '';
 		
 		/**
-		 * [string]
-		 * Definition der Navigationsleiste
+		 * navigation bar
 		 */
 		private $navigation = '';
 		
 		/**
-		 * [string]
-		 * Systemnachricht(en)
+		 * user notification messages
 		 */
 		private $message = '';
 		
 		/**
-		 * [string]
-		 * Auszeichnungen im Fußbereich
+		 * footer contents
 		 */
 		private $foot = '';
 
 		/**
-		 * [SplStack]
-		 * Stack, der zum Schließen geöffneter HTML-Tags benötigt wird
+		 * stack for easy container handling
 		 */		
 		private $stack;
 
 		/**
-		 * [int]
-		 * Anzahl der Elemente im Stack
+		 * number of items in $stack
 		 */		
 		private $stackNo;
 		
-        /**
-         * Klassenkonstruktor
-		 * Initialisiert die Ausgabevariablen mit Standardtext
-		 *
-		 * @parameter
-		 * - title : optionaler Seitentitel
-		 *
+        /** __construct()
+         * standard initializations
+		 * - $title : document title
 		 */
 		public function __construct($title = '') {			
-			// gesamten head-Bereich innerhalb des <html>-Tags setzen
+			// define HTML head content and begin HTML body
 			$this->head .= '<!DOCTYPE html>';
 			$this->head .= '<html>';
 			$this->head .= '<head>';
@@ -75,18 +60,19 @@
 			$this->head .= '<div class="iw-wrapper">';
 			$this->head .= '<div class="iw-headline">' . $title . '</div>';
 			
-			// footer setzen, Dokument beenden
+			// set footer and end HTML document
 			$this->foot .= '</div><div class="iw-footer">';
 			$this->foot .= '<a href="https://tools.wmflabs.org/hgztools">hgztools</a> powered by <a href="https://wikitech.wikimedia.org/wiki/Portal:Toolforge">Toolforge</a>.';
 			$this->foot .= '</div></div>';
 			$this->foot .= '</body>';
 			$this->foot .= '</html>';
 			
+			// initialize stack
 			$this->stack = new \SplStack;
 		}
 		
-		/**
-		 * erstellt die Navigationsleiste.
+		/** setNavigation()
+		 * create the navigation bar
 		 *
 		 * @parameter
 		 * - navInfo    : assoziatives Array der Form 'Anzeigetext' => 'URL'
@@ -397,51 +383,48 @@
 	}
 	
 	/**
-	 * ##### CLASS Database CLASS #####
-	 * Klasse für Datenbankfunktionen
-	 *
-	 * @erweitert
-	 * - mysqli
+	 * CLASS Database
+	 * database helper functions extending mysqli functionality
 	 */
 	class Database extends mysqli {
 		
-		/**
-		 * Verbindung mit Datenbank herstellen.
-		 *
-		 * @parameter
-		 * - database    : Name der Datenbank
-		 *
+		/** replicaConnect()
+		 * initialize connection with wmcs database replicas using user credentials
+		 * - $database : database name
 		 */
 		public function replicaConnect($database) {
+			// get credentials
+			$mycnf = parse_ini_file('/data/project/hgztools/replica.my.cnf');
 			
-			$mycnf = parse_ini_file( "/data/project/hgztools/replica.my.cnf" );
+			// get database cluster
 			$cluster = ( preg_match( '/[-_]p$/', $database ) ) ? substr( $database, 0, -2 ) : $database;
+			
+			// connect to database
 			parent::connect($cluster . '.analytics.db.svc.eqiad.wmflabs', $mycnf['user'], $mycnf['password']);
+			
+			// destroy credential information
 			unset($mycnf);
 			
-			if( $this->connect_error ) {
+			// fetch connecting errors
+			if ($this->connect_error) {
 				die( '<p><strong>Database server login failed.</strong> '
 				. ' This is probably a temporary problem with the server and will be fixed soon. '
 				. ' The server returned error code ' . $this->connect_errno . '.</p>' );
 			}
 			
+			// select database
 			$res = $this->select_db(str_replace('-', '_', $database));
 			
-			if( $res === false ){
+			// fetch selection errors
+			if ($res === false) {
 				die( '<p><strong>Database selection failed.</strong> '
 				. ' This is probably a temporary problem with the server and will be fixed soon.</p>' );
 			}
-			
 		}
 
-		/**
-		 * übergibt rohe Datenwerte als Referenz
-		 *
-		 * @parameter
-		 * - arr : Array mit Werten
-		 *
-		 * @rückgabe
-		 * - Array mit Referenzen
+		/** refValues()
+		 * commit raw data values as reference
+		 * - $arr : array with values
 		 */
 		private function refValues($arr){
 			if (strnatcmp(phpversion(), '5.3') >= 0) {
@@ -450,79 +433,71 @@
 					$refs[$k1] = &$arr[$k1];
 				return $refs;
 			}
+			
+			// return
 			return $arr;
 		}
 		
-		/**
-		 * erstellt ein prepared statement und führt daraus direkt eine Datenbankabfrage durch
-		 *
-		 * @parameter
-		 * - (1)    : Query-String
-		 * - (2)    : Referenztypen (1. Parameter von bind_param)
-		 * - (3...) : Referenzen (folgende Parameter von bind_param)
-		 *
-		 * @rückgabe
-		 * - Statementobjekt
+		/** executePreparedQuery()
+		 * creates a prepared mysqli statement and executes it directly
+		 * - (1)    : query string
+		 * - (2)    : reference types (first parameter to mysqli::bind_param())
+		 * - (3...) : references (following parameters to mysqli::bind_param())
 		 */
 		public function executePreparedQuery() {
-			
-			// mindestens 1 Parameter muss vorhanden sein
+			// at least 1 parameter is needed
 			$numParam = func_num_args();
 			if ($numParam < 1) {
-				throw new Exception('executeQuery: Falsche Anzahl von Parametern');
+				return false;
 			}
 			
-			// alle Parameter beziehen
+			// get all parameters
 			$parList = func_get_args();
 			
+			// prepare statement with text from first parameter
 			$query = $this->prepare($parList[0]);
 			if ($query === false) {
-				throw new Exception('executeQuery: Fehler beim Erstellen des Ausdrucks');
+				return false;
 			}
 			
-			// ersten Parameter entfernen, der Rest wird an bind_param übergeben
+			// remove first parameter, supply the rest to mysqli::bind_param()
 			unset($parList[0]);
 			
-			// Übergabe, falls noch Parameter vorhanden sind
+			// if parameters left, supply them to mysqli::bind_param()
 			if (count($parList) != 0) {
 				call_user_func_array([$query, 'bind_param'], $this->refValues($parList));
 			}
 			
-			// Abfrage ausführen und Ergebnisse holen
+			// execute query and store result
 			$query->execute();
 			$query->store_result();
 			
-			// Statement-Objekt zurückgeben
+			// return mysqli_stmt object
 			return $query;
 		}
 
-		/**
-		 * Ergebnis einer Abfrage prüfen
-		 *
-		 * @parameter
-		 * - query : Objekt
-		 *
+		/** checkSqlQueryObject()
+		 * checks if the given query/result object is valid, for
+		 * catching sql errors
+		 * - $query : result object
 		 */
 		public static function checkSqlQueryObject($query) {
-			
+			// mysqli_stmt and mysqli_result are valid
 			if (($query instanceof mysqli_stmt) || ($query instanceof mysqli_result)) {
 				return true;
 			} else {
 				return false;
 			}
-			
 		}
 
-		/**
-		 * Datenbanknamen ermitteln
-		 *
-		 * @parameter
-		 * - lang      : Sprache
-		 * - project   : Projekt
-		 * - separator : Separator
-		 *
+		/** getName()
+		 * get wiki database name
+		 * $lang      : project language
+		 * $project   : project name
+		 * $separator : additional separator
 		 */		
 		public static function getName($lang, $project, $separator = '-') {
+			// get suffix
 			if ($project == 'wikipedia') {
 				$project = 'wiki';
 			} elseif ($project == 'wikimedia') {
@@ -531,34 +506,36 @@
 				$project = 'wiki';
 				$lang = 'wikidata';
 			}
+			
+			// add prefix with separator and return
 			return $lang . $project . $separator . 'p';
 		}
 		
-		/**
-		 * liest alle Ergebnisse einer Datenbankabfrage aus und gibt sie als Array zurück.
-		 *
-		 * @parameter
-		 * - query : Query-Objekt
-		 *
-		 * @rückgabe
-		 * - Ergebnisarray 
+		/** fetchResult()
+		 * fetching both mysqli_stmt and mysqli_result query results in the same way
+		 * - $query : mysqli result/statement object
 		 */
 		public static function fetchResult($query) {   
 		    $array = [];
-   
+			
 			if ($query instanceof mysqli_stmt) {
+				// mysqli_stmt
+				
+				// get statement metadata
 				$query->store_result();
-			   
 				$variables = [];
 				$data = [];
 				$meta = $query->result_metadata();
-			   
+				
+				// get sql result field names
 				while ($field = $meta->fetch_field()) {
 					$variables[] = &$data[$field->name];
 				}
-			   
+				
+				// bind results to corresponding field names
 				call_user_func_array([$query, 'bind_result'], $variables);
-			   
+				
+				// fetch data
 				$i = 0;
 				while ($query->fetch()) {
 					$array[$i] = [];
@@ -567,20 +544,22 @@
 					$i++;
 				}
 			} elseif ($query instanceof mysqli_result) {
-				while($row = $query->fetch_assoc()) {
+				// mysqli_result
+				
+				// fetch all rows
+				while ($row = $query->fetch_assoc()) {
 					$array[] = $row;
 				}
 			}
+			
+			// return
 			return $array;
 		}
 		
-		/**
-		 * Bezeichnung des Namensraums nach dessen Nummer ermitteln
-		 *
-		 * @parameter
-		 * - nr         : Namensraumnummer
-		 * - urlencoded : URL-kodierte Namen zurückgeben
-		 *
+		/** getNsNameFromNr()
+		 * returns namespace number from canonic name
+		 * - $nr         : namespace nr
+		 * - $urlencoded : replace spaces by underscores (true/false)
 		 */		
 		public static function getNsNameFromNr($nr, $urlencoded = true) {
 			$ns = 	[	0 => '',
@@ -601,8 +580,10 @@
 						15 => 'Category_talk:'
 					];
 			
+			// match nr with name
 			$name = $ns[$nr];
 			
+			// apply urlencoded form
 			if ($urlencoded == true) {
 				return $name;
 			} else {
@@ -612,57 +593,68 @@
 		
 	}
 	
-	/**
-	 * ##### CLASS RequestValidator CLASS #####
-	 * Klasse für Anfragenvalidierung
-	 *
+	/** CLASS RequestValidator
+	 * check request parameters for matching format and other specifications, apply
+	 * changes to them if necessary
 	 */
 	class RequestValidator {
 		
 		/**
-		 * [array]
 		 * allowed params
 		 */
 		private $allowed = [];
 		
-		/**
-		 * validates one single parameter
-		 *
+		/** validateSingleParam()
+		 * validates one single parameter based on its attributes defined in addAllowed()
+		 * - $name  : parameter name
+		 * - $value : parameter value
 		 */
 		private function validateSingleParam($name, $value) {
 			$ret = '';
 			
+			// is allowed parameter?
 			if (!isset($this->allowed[$name])) {
 				return false;
 			}
 			
+			// if empty, apply default value
 			if ($value == '' && isset($this->allowed[$name]['default']) && $this->allowed[$name]['default'] != '') {
 				$ret = $this->allowed[$name]['default'];
 			} else {
 				$ret = $value;
 			}
 			
+			// apply lcase transformation
 			if ($this->allowed[$name]['lcase'] == true) {
 				$ret = strtolower($ret);
 			}
 			
+			// remove html special chars
 			$ret = htmlspecialchars($ret);
 			
+			// check if parameter value matches given regexp pattern
 			if (isset($this->allowed[$name]['pattern']) && $this->allowed[$name]['pattern'] != '' && $ret != '') {
 				if (!preg_match($this->allowed[$name]['pattern'], $ret)) {
 					return false;
 				}
 			}
 			
+			// return validated value
 			return $ret;
 		}
 		
-		/**
-		 * adds a new allowed parameter
-		 *
+		/** addAllowed()
+		 * adds a new allowed request parameter
+		 * - $type     : http request type (GET/POST)
+		 * - $name     : parameter name
+		 * - $default  : default value
+		 * - $pattern  : validation pattern
+		 * - $required : true/false
+		 * - $lcase    : always transform to lcase (true/false)
 		 */
 		public function addAllowed($type, $name, $default = '', $pattern = '', $required = false, $lcase = true) {
 			if ($type == 'GET' || $type == 'POST' ) {
+				// set attributes for allowed parameters
 				$this->allowed[$name]['type']     = $type;
 				$this->allowed[$name]['default']  = $default;
 				$this->allowed[$name]['pattern']  = $pattern;
@@ -671,102 +663,135 @@
 				$this->allowed[$name]['touched']  = false;
 				return true;
 			} else {
+				// only GET and POST allowed
 				return false;
 			}
 		}
 
-		/**
+		/** getParams()
 		 * validates request parameters and returns the valid ones
-		 *
 		 */		
 		public function getParams() {
 			$ret = [];
 			$val = '';
 			
+			// loop through parameters defined as allowed
 			foreach ($this->allowed as $k1 => &$v1) {
+				
+				// HTTP GET parameters
 				foreach ($_GET as $k2 => $v2) {
 					if ($k1 == $k2 && $v1['type'] == 'GET') {
+						// validate match
 						$val = $this->validateSingleParam($k1, $v2);
 						$v1['touched'] = true;
 					}
 				}
 				
+				// HTTP POST parameters
 				foreach ($_POST as $k2 => $v2) {
 					if ($k1 == $k2 && $v1['type'] == 'POST') {
+						// validate match
 						$val = $this->validateSingleParam($k1, $v2);
 						$v1['touched'] = true;
 					}
 				}
 				
+				// not found in GET or POST
 				if ($v1['touched'] == false) {
 					$val = $this->validateSingleParam($k1, '');
 					$v1['touched'] = true;
 				}
 				
+				// set validated data
 				$ret[$k1] = $val;
 				$v1['value'] = $val;
 			}
 			unset($v1);
 			
+			// return
 			return $ret;
 		}
 		
-		/**
-		 * checks if all required params are defined
-		 *
+		/** allRequiredDefined()
+		 * checks if all required parameters are defined in the current query
 		 */		
-
 		public function allRequiredDefined() {
+			// standard
 			$all = true;
 			
 			foreach ($this->allowed as $k1 => $v1) {
 				if ($v1['required'] == true && $v1['value'] == '') {
+					// found required parameter with no value
 					$all = false;
 				}
 			}
 			
+			// return
 			return $all;
 		}
 		
 	}
 	
-	/**
-	 * ##### CLASS Hgz CLASS #####
-	 * Klasse für Hilfsfunktionen
-	 *
+	/** CLASS Hgz
+	 * standard tool class
 	 */
 	class Hgz {
 		
+		/**
+		 * standard page object
+		 */
 		protected $page;
-		
+
+		/**
+		 * standard database object
+		 */		
 		protected $db;
-		
+
+		/**
+		 * standard RequestValidator object
+		 */		
 		protected $rq;
 		
-		/**
+		/** buildWikilink()
 		 * creates a link to a wiki page
-		 *
+		 * - $lang     : project language
+		 * - $project  : project name
+		 * - $page     : wiki page
+		 * - $title    : link title
+		 * - $urlquery : additional query
 		 */
 		public static function buildWikilink($lang, $project, $page, $title = '', $urlquery = '') {
+			// begin link
 			$ret  = '<a href="https://' . $lang . '.' . $project . '.org/wiki/' . $page;
+			
+			// additional query
 			if ($urlquery != '') {
 				$ret .= '?' . $urlquery;
 			}
+			
+			// title
 			$ret .= '" title="';
 			if ($title != '') { $ret .= $title; } else { $ret .= $page; }
 			$ret .= '">';
+			
+			// text
 			if ($title != '') { $ret .= $title; } else { $ret .= $page; }
+			
+			// finish link
 			$ret .= '</a>';
 			
+			// return
 			return $ret;
 		}
 
-		/**
+		/** getProjectShortcut()
 		 * returns the shortcut for wmf projects
-		 *
+		 * - $lang     : project language
+		 * - $project  : project name
 		 */		
 		public static function getProjectShortcut($project, $lang) {
 			
+			// get standard project abbreviations
 			switch (strtolower($project)) {
 				case 'wikipedia'   : $project = 'w'; break;
 				case 'wikidata'    : $project = 'd'; break;
@@ -779,6 +804,7 @@
 				case 'wikinews'    : $project = 'n'; break;
 			}
 			
+			// special hosted wikis (.wikimedia.org)
 			switch (strtolower($lang)) {
 				case 'commons' : 
 					$project = 'c';
@@ -790,13 +816,14 @@
 					break;
 			}
 			
+			// build return value "project:lang:"
 			$ret = $project . ':';
 			if ($lang) {
 				$ret .= $lang . ':';
 			}
 			
+			// return
 			return $ret;
-			
 		}
 		
 	}
