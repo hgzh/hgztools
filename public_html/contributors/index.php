@@ -213,9 +213,11 @@
 		private function formSubmitted() {
 			$this->page->openBlock('div', 'iw-content');
 			$this->page->addInline('h2', 'Results');
-			
+						
 			$this->db->replicaConnect(Database::getName($this->par['lang'], $this->par['project']));
-			$this->par['page'] = str_replace(' ', '_', $this->par['page']);
+			$this->par['page'] = urldecode($this->par['page']);
+			$this->par['page'] = html_entity_decode($this->par['page']);
+			$this->par['page'] = str_replace(' ', '_', $this->par['page']);			
 			$t1  = 'SELECT rv.rev_timestamp, ac.actor_name, cm.comment_text, rv.rev_id';
 			$t1 .= ' FROM revision_userindex rv';
 			$t1 .= ' INNER JOIN page p ON rv.rev_page = p.page_id';
